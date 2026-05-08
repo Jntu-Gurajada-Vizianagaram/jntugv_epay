@@ -49,6 +49,7 @@ const PaymentInitiateSchema = z.object({
     aadhar: z.string().optional(),
     address: z.string().optional(),
     multiAccountInstructionDtls: z.string().optional(),
+    multiAccountInstructionDetails: z.string().optional(),
 }).superRefine((data, ctx) => {
     // Add specific checks if necessary
     if (data.payment_category === "UNIVERSITY_EXAMINATION" && !data.semester) {
@@ -66,8 +67,9 @@ const PaymentInitiateSchema = z.object({
         });
     }
 
-    if (data.multiAccountInstructionDtls) {
-        const splitString = data.multiAccountInstructionDtls.replace(/{AMOUNT}/g, String(data.amount));
+    const multiAccountStr = data.multiAccountInstructionDtls || data.multiAccountInstructionDetails;
+    if (multiAccountStr) {
+        const splitString = multiAccountStr.replace(/{AMOUNT}/g, String(data.amount));
         const splits = splitString.split('||');
         let sum = 0;
         for (const split of splits) {
@@ -82,7 +84,7 @@ const PaymentInitiateSchema = z.object({
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: `Sum of split amounts (${sum}) does not match the total amount (${data.amount})`,
-                path: ["multiAccountInstructionDtls"],
+                path: [data.multiAccountInstructionDtls ? "multiAccountInstructionDtls" : "multiAccountInstructionDetails"],
             });
         }
     }

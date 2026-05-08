@@ -116,14 +116,19 @@ exports.initiate = async (data) => {
     console.log("========== UNENCRYPTED PAYLOADS ==========");
     console.log("SINGLE REQUEST:", singleRequest);
 
-    // Handle the Multi-Account Splits
-    const multiAccountsStr = (data.multiAccountInstructionDtls || process.env.SBI_MULTI_ACCOUNT_INSTRUCTION_DTLS || "{AMOUNT}|INR|GRPT").replace(/{AMOUNT}/g, data.amount);
+    // Handle the Multi-Account Splits (support both camelCase and snake_case naming)
+    const multiAccountsStr = (
+      data.multiAccountInstructionDtls || 
+      data.multiAccountInstructionDetails || 
+      process.env.SBI_MULTI_ACCOUNT_INSTRUCTION_DTLS || 
+      "{AMOUNT}|INR|GRPT"
+    ).replace(/{AMOUNT}/g, data.amount);
     console.log("MULTI ACCOUNT DETAILS:", multiAccountsStr);
     console.log("==========================================");
 
-    console.log("ENCRYPTING HOSTED FORM PAYLOAD USING AES-256-CBC");
+    console.log("ENCRYPTING HOSTED FORM PAYLOAD USING AES-256-ECB");
 
-    // Encrypt using custom SBI crypto logic (AES-256-CBC)
+    // Encrypt using custom SBI crypto logic (AES-256-ECB)
     const sbiCrypto = require("../utils/sbiCrypto");
     const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
     const encryptTrans = sbiCrypto.encrypt(singleRequest, encryptionKey);

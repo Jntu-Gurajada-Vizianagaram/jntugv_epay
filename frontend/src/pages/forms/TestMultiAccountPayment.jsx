@@ -8,7 +8,7 @@ export function TestMultiAccountPayment() {
     mobile: "9999999999",
     email: "test@example.com",
     amount: "300",
-    multiAccountInstructionDtls: "100|INR|AAT||200|INR|NEFT",
+    multiAccountInstructionDtls: "100|INR|GRPT||200|INR|GRPT",
   });
 
 

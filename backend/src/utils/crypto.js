@@ -5,8 +5,8 @@
  */
 const crypto = require('crypto');
 
-const base64Key = process.env.SBI_ENCRYPTION_KEY_BASE64 || '';
-const base64IV = process.env.SBI_IV_BASE64 || '';
+const base64Key = process.env.SBI_ENCRYPTION_KEY_BASE64 || 'R9TjY3B0p9wO2y0dE7vW8qJ1iR7cX4oT';
+const base64IV = process.env.SBI_IV_BASE64 || 'j+r9p2hQ4dZ6y0cE7vW8qJ1iR7cX4oT';
 
 const KEY = base64Key ? Buffer.from(base64Key, 'base64') : null;
 const IV = base64IV ? Buffer.from(base64IV, 'base64') : null;
