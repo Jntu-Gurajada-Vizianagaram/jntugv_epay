@@ -61,6 +61,7 @@ export function Home() {
         <CardTile to="/admissions" title="Admissions" desc="New admissions & special category fees" icon="🎟️" accent="amber" />
         <CardTile to="/affiliation" title="Affiliation Fees" desc="College affiliation & inspections" icon="🏛️" accent="rose" />
         <CardTile to="/challan" title="Direct Challans" desc="Other challans, fines & miscellaneous" icon="💳" accent="teal" />
+        <CardTile to="/test-multi-account" title="Test Multi-Account" desc="Test splits (For dev only)" icon="🧪" accent="gray" />
       </div>
 
 

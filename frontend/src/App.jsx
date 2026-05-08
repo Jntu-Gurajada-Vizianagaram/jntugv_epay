@@ -18,6 +18,7 @@ import { AffiliationForm } from "./pages/forms/AffiliationForm";
 import { ChallanForm } from "./pages/forms/ChallanForm";
 // import { PHDForm } from "./pages/forms/PHDForm";
 import { PhDFeeForm } from "./pages/forms/PhDFeeForm";
+import { TestMultiAccountPayment } from "./pages/forms/TestMultiAccountPayment";
 import { PageDisabled } from "./pages/PageDisabled";
 import { NotFound } from "./pages/NotFound";
 import { ContactUs } from "./pages/ContactUs";
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="/affiliation" element={<AffiliationForm />} />
         <Route path="/challan" element={<ChallanForm />} />
         <Route path="/phd-fee" element={<PhDFeeForm />} />
+        <Route path="/test-multi-account" element={<TestMultiAccountPayment />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/faq" element={<FAQ />} />

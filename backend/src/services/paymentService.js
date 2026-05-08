@@ -84,44 +84,54 @@ exports.initiate = async (data) => {
   const returnUrl = cleanUrl(process.env.RETURN_URL) || `${process.env.API_URL}/api/payment/return`;
 
   try {
+    // Using LIVE TESTKIT credentials and Hosted Form code as requested for Multi Account Settlement
     const sbiePayClient = new SBIEPayClient({
       apiKey: process.env.SBI_MERCHANT_ID,
       apiSecret: process.env.SBI_MERCHANT_KEY,
       encryptionKey: process.env.SBI_ENCRYPTION_KEY_BASE64
     }, 'SANDBOX', true);
 
-    const orderPayload = {
-      orderAmount: data.amount,
-      currencyCode: 'INR',
-      orderRefNumber: merchantTxnId, // Must be alphanumeric, JNTUGV-time
-      returnUrl: returnUrl
-    };
+    const merchantId = process.env.SBI_MERCHANT_ID;
+    const aggregatorId = process.env.SBI_AGGREGATOR_ID || "SBIEPAY";
 
-    console.log("CREATING ORDER:", orderPayload);
-    const apiResponse = await sbiePayClient.order.create(orderPayload);
+    const operatingMode = process.env.SBI_OPERATING_MODE || "DOM";
+    const merchantCountry = process.env.SBI_MERCHANT_COUNTRY || "IN";
+    const merchantCurrency = process.env.SBI_MERCHANT_CURRENCY || "INR";
+    const TotalDueAmount = String(data.amount);
+    const Otherdetail = data.student_name || "NA";
 
-    if (apiResponse.status === 1 && apiResponse.data && apiResponse.data.length > 0) {
-      const orderData = apiResponse.data[0];
-      console.log("ORDER CREATED:", orderData.transactionUrl);
+    // Front-end URLs for redirection
+    const appBaseUrl = process.env.APP_BASE_URL || "http://localhost:5173";
+    const successUrl = `${appBaseUrl}/payment/success`;
+    const failUrl = `${appBaseUrl}/payment/failure`;
 
-      return {
-        action: orderData.transactionUrl,
-        method: "GET",
-        merchantTxnId,
-        fields: {}
-      };
-    } else {
-      console.error("SBI API Error:", JSON.stringify(apiResponse.errors));
-      throw new Error("Failed to create SBI ePay Order");
-    }
+    const merchantOrderNo = merchantTxnId;
+    const merchantCustomerId = process.env.SBI_MERCHANT_CUSTOMER_ID || "2";
+    const paymode = process.env.SBI_PAYMODE || "NB";
+    const accessMedium = process.env.SBI_ACCESS_MEDIUM || "ONLINE";
+    const transactionSource = process.env.SBI_TRANSACTION_SOURCE || "ONLINE";
 
-  } catch (error) {
-    console.warn("WARNING: SDK call failed or misconfigured. Falling back to mock bank or throwing error.", error.message);
+    // Build the pipe-separated singleRequest string as per Bank Shared Code
+    const singleRequest = `${merchantId}|${operatingMode}|${merchantCountry}|${merchantCurrency}|${TotalDueAmount}|${Otherdetail}|${successUrl}|${failUrl}|${aggregatorId}|${merchantOrderNo}|${merchantCustomerId}|${paymode}|${accessMedium}|${transactionSource}`;
+    console.log("========== UNENCRYPTED PAYLOADS ==========");
+    console.log("SINGLE REQUEST:", singleRequest);
 
-    // Fallback to Mock Bank behavior if SDK not fully configured or fails
-    let actionUrl = cleanUrl(process.env.SBI_PAYMENT_URL);
-    if (actionUrl.includes("sbiepay.sbiuat.bank.in")) {
-      actionUrl = `${process.env.API_URL}/api/mock-bank/payment`;
+    // Handle the Multi-Account Splits
+    const multiAccountsStr = (data.multiAccountInstructionDtls || process.env.SBI_MULTI_ACCOUNT_INSTRUCTION_DTLS || "{AMOUNT}|INR|GRPT").replace(/{AMOUNT}/g, data.amount);
+    console.log("MULTI ACCOUNT DETAILS:", multiAccountsStr);
+    console.log("==========================================");
+
+    console.log("ENCRYPTING HOSTED FORM PAYLOAD USING AES-256-CBC");
+
+    // Encrypt using custom SBI crypto logic (AES-256-CBC)
+    const sbiCrypto = require("../utils/sbiCrypto");
+    const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
+    const encryptTrans = sbiCrypto.encrypt(singleRequest, encryptionKey);
+    const encryptMAId = sbiCrypto.encrypt(multiAccountsStr, encryptionKey);
+
+    let actionUrl = "https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener";
+    if (process.env.SBI_ENVIRONMENT === "LIVE") {
+      actionUrl = "https://sbiepay.sbi.co.in/secure/AggregatorHostedListener";
     }
 
     return {
@@ -129,17 +139,15 @@ exports.initiate = async (data) => {
       method: "POST",
       merchantTxnId,
       fields: {
-        merchantId: process.env.SBI_MERCHANT_ID,
-        encRequest: process.env.SBI_ENCRYPTION_KEY_BASE64,
-        merchantTxnId,
-        amount: String(data.amount),
-        customerName: data.student_name || data.college_name,
-        customerMobile: data.mobile,
-        customerEmail: data.email,
-        callbackUrl,
-        returnUrl
+        EncryptTrans: encryptTrans,
+        MultiAccountInstructionDtls: encryptMAId,
+        merchIdVal: merchantId
       }
     };
+
+  } catch (error) {
+    console.error("SBI ePay Crypto/Hosted Form Error:", error.message);
+    throw error;
   }
 };
 
@@ -163,12 +171,12 @@ exports.callback = async (body) => {
   const statusStr = (body.status || "").toUpperCase();
   txn.status = bankStatusMap[statusStr] || 'PENDING';
   txn.bankTxnId = body.bankTxnId;
-  
+
   await txn.save();
 };
 
 exports.getHistory = async (student_roll) => {
-  return await Payment.findAll({ 
+  return await Payment.findAll({
     where: { student_roll },
     order: [['createdAt', 'DESC']]
   });
@@ -208,14 +216,14 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
     const payload = {
       orderRefNumber: merchantTxnId
     };
-    
+
     // Order inquiry API
     const apiResponse = await sbiePayClient.order.transactionOrders(payload);
-    
+
     // Check if valid bank response
     if (apiResponse && apiResponse.status === 1 && apiResponse.data && apiResponse.data.length > 0) {
       const bankData = apiResponse.data[0];
-      
+
       // Update local BD if status changed from bank
       const txn = await Payment.findOne({ where: { merchantTxnId } });
       if (txn && bankData.orderStatus) {
@@ -230,7 +238,7 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
           'REFUNDED': 'REFUNDED'
         };
         const mappedStatus = bankStatusMap[bankData.orderStatus.toUpperCase()] || txn.status;
-        
+
         if (txn.status !== mappedStatus) {
           txn.status = mappedStatus;
           if (bankData.paymentInfo && bankData.paymentInfo.paymentRefNumber) {
@@ -249,9 +257,9 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
         fullBankResponse: bankData
       };
     } else {
-      return { 
-        merchantTxnId, 
-        isVerified: false, 
+      return {
+        merchantTxnId,
+        isVerified: false,
         error: "Invalid or empty response from bank.",
         details: apiResponse.errors
       };

@@ -48,6 +48,7 @@ const PaymentInitiateSchema = z.object({
     dob: z.string().optional(),
     aadhar: z.string().optional(),
     address: z.string().optional(),
+    multiAccountInstructionDtls: z.string().optional(),
 }).superRefine((data, ctx) => {
     // Add specific checks if necessary
     if (data.payment_category === "UNIVERSITY_EXAMINATION" && !data.semester) {
@@ -63,6 +64,27 @@ const PaymentInitiateSchema = z.object({
             message: "Fee Type is required for PhD Fee",
             path: ["fee_type"],
         });
+    }
+
+    if (data.multiAccountInstructionDtls) {
+        const splitString = data.multiAccountInstructionDtls.replace(/{AMOUNT}/g, String(data.amount));
+        const splits = splitString.split('||');
+        let sum = 0;
+        for (const split of splits) {
+            const parts = split.split('|');
+            if (parts.length > 0 && !isNaN(parts[0])) {
+                sum += parseFloat(parts[0]);
+            }
+        }
+        
+        // Use a small epsilon for floating point comparison if necessary, but amounts should be exact
+        if (Math.abs(sum - data.amount) > 0.01) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Sum of split amounts (${sum}) does not match the total amount (${data.amount})`,
+                path: ["multiAccountInstructionDtls"],
+            });
+        }
     }
 });
 

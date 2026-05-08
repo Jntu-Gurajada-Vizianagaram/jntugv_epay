@@ -29,3 +29,37 @@ function decryptPayload(base64Str) {
 }
 
 module.exports = { encryptPayload, decryptPayload };
+
+
+// const crypto = require('crypto');
+
+// function encrypt(payload, keyBase64) {
+//   const key = Buffer.from(keyBase64, 'base64');
+
+//   if (key.length !== 32) {
+//     throw new Error("Invalid Key Length for AES-256. Expected 32 bytes.");
+//   }
+
+//   const iv = Buffer.alloc(16, 0); // ✅ ZERO IV (CRITICAL)
+
+//   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+
+//   let encrypted = cipher.update(payload, 'utf8', 'base64');
+//   encrypted += cipher.final('base64');
+
+//   return encrypted;
+// }
+
+// function decrypt(encryptedBase64, keyBase64) {
+//   const key = Buffer.from(keyBase64, 'base64');
+//   const iv = Buffer.alloc(16, 0); // ✅ SAME IV
+
+//   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+
+//   let decrypted = decipher.update(encryptedBase64, 'base64', 'utf8');
+//   decrypted += decipher.final('utf8');
+
+//   return decrypted;
+// }
+
+// module.exports = { encrypt, decrypt };

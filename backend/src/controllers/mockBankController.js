@@ -2,7 +2,7 @@ const axios = require("axios");
 
 exports.processMockPayment = async (req, res) => {
   try {
-    const { merchantId, callbackUrl, returnUrl, merchantTxnId, amount, customerName, customerEmail, customerMobile } = req.body;
+    const { merchantId, callbackUrl, returnUrl, merchantTxnId, amount, customerName, customerEmail, customerMobile, multiAccountInstructionDtls } = req.body;
     const effectiveTxnId = merchantTxnId || "MOCK-" + Date.now();
     res.send(`
       <!DOCTYPE html>
@@ -44,6 +44,11 @@ exports.processMockPayment = async (req, res) => {
             <label>Amount</label>
             <div class="value">₹ ${amount || "0.00"}</div>
           </div>
+          ${multiAccountInstructionDtls ? `
+          <div class="row">
+            <label>Multi-Account Splits</label>
+            <div class="value" style="font-size: 0.9rem; color: #0056b3;">${multiAccountInstructionDtls.split('^').join('<br>')}</div>
+          </div>` : ''}
 
           <form action="/api/mock-bank/confirm" method="POST">
             <input type="hidden" name="merchantId" value="${merchantId}" />
