@@ -134,6 +134,10 @@ exports.initiate = async (data) => {
     const encryptTrans = sbiCrypto.encrypt(singleRequest, encryptionKey);
     const encryptMAId = sbiCrypto.encrypt(multiAccountsStr, encryptionKey);
 
+    console.log("ENCRYPTED SINGLE REQUEST (EncryptTrans):", encryptTrans);
+    console.log("ENCRYPTED MULTI ACCOUNT DETAILS (MultiAccountInstructionDtls):", encryptMAId);
+
+
     let actionUrl = "https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener";
     if (process.env.SBI_ENVIRONMENT === "LIVE") {
       actionUrl = "https://sbiepay.sbi.co.in/secure/AggregatorHostedListener";
