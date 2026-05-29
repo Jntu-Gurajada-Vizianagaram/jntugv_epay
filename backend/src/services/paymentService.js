@@ -1,6 +1,8 @@
 const db = require("../models");
 const Payment = db.Payment;
 const { SBIEPayClient } = require("epay_nodejs_sdk");
+const AES256 = require("../utils/encryptor");
+const aes = new AES256();
 
 exports.initiate = async (data) => {
 
@@ -91,25 +93,25 @@ exports.initiate = async (data) => {
       encryptionKey: process.env.SBI_ENCRYPTION_KEY_BASE64
     }, 'SANDBOX', true);
 
-    const merchantId = process.env.SBI_MERCHANT_ID;
-    const aggregatorId = process.env.SBI_AGGREGATOR_ID || "SBIEPAY";
+    const merchantId = data.merchantId || process.env.SBI_MERCHANT_ID;
+    const aggregatorId = data.aggregatorId || process.env.SBI_AGGREGATOR_ID || "SBIEPAY";
 
-    const operatingMode = process.env.SBI_OPERATING_MODE || "DOM";
-    const merchantCountry = process.env.SBI_MERCHANT_COUNTRY || "IN";
-    const merchantCurrency = process.env.SBI_MERCHANT_CURRENCY || "INR";
+    const operatingMode = data.operatingMode || process.env.SBI_OPERATING_MODE || "DOM";
+    const merchantCountry = data.merchantCountry || process.env.SBI_MERCHANT_COUNTRY || "IN";
+    const merchantCurrency = data.merchantCurrency || process.env.SBI_MERCHANT_CURRENCY || "INR";
     const TotalDueAmount = String(data.amount);
     const Otherdetail = data.student_name || "NA";
 
     // Front-end URLs for redirection
     const appBaseUrl = process.env.APP_BASE_URL || "http://localhost:5173";
-    const successUrl = `${appBaseUrl}/payment/success`;
-    const failUrl = `${appBaseUrl}/payment/failure`;
+    const successUrl = data.successUrl || `${appBaseUrl}/payment/success`;
+    const failUrl = data.failUrl || `${appBaseUrl}/payment/failure`;
 
     const merchantOrderNo = merchantTxnId;
-    const merchantCustomerId = process.env.SBI_MERCHANT_CUSTOMER_ID || "2";
-    const paymode = process.env.SBI_PAYMODE || "NB";
-    const accessMedium = process.env.SBI_ACCESS_MEDIUM || "ONLINE";
-    const transactionSource = process.env.SBI_TRANSACTION_SOURCE || "ONLINE";
+    const merchantCustomerId = data.merchantCustomerId || process.env.SBI_MERCHANT_CUSTOMER_ID || "2";
+    const paymode = data.paymode || process.env.SBI_PAYMODE || "NB";
+    const accessMedium = data.accessMedium || process.env.SBI_ACCESS_MEDIUM || "ONLINE";
+    const transactionSource = data.transactionSource || process.env.SBI_TRANSACTION_SOURCE || "ONLINE";
 
     // Build the pipe-separated singleRequest string as per Bank Shared Code
     const singleRequest = `${merchantId}|${operatingMode}|${merchantCountry}|${merchantCurrency}|${TotalDueAmount}|${Otherdetail}|${successUrl}|${failUrl}|${aggregatorId}|${merchantOrderNo}|${merchantCustomerId}|${paymode}|${accessMedium}|${transactionSource}`;
@@ -118,25 +120,30 @@ exports.initiate = async (data) => {
 
     // Handle the Multi-Account Splits (support both camelCase and snake_case naming)
     const multiAccountsStr = (
-      data.multiAccountInstructionDtls || 
-      data.multiAccountInstructionDetails || 
-      process.env.SBI_MULTI_ACCOUNT_INSTRUCTION_DTLS || 
+      data.multiAccountInstructionDtls ||
+      data.multiAccountInstructionDetails ||
+      process.env.SBI_MULTI_ACCOUNT_INSTRUCTION_DTLS ||
       "{AMOUNT}|INR|GRPT"
     ).replace(/{AMOUNT}/g, data.amount);
     console.log("MULTI ACCOUNT DETAILS:", multiAccountsStr);
     console.log("==========================================");
 
-    console.log("ENCRYPTING HOSTED FORM PAYLOAD USING AES-256-ECB");
+    console.log("ENCRYPTING HOSTED FORM PAYLOAD USING Encryptor.js (AES-256-CBC)");
 
-    // Encrypt using custom SBI crypto logic (AES-256-ECB)
-    const sbiCrypto = require("../utils/sbiCrypto");
-    const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
-    const encryptTrans = sbiCrypto.encrypt(singleRequest, encryptionKey);
-    const encryptMAId = sbiCrypto.encrypt(multiAccountsStr, encryptionKey);
+    // Encrypt using Encryptor.js as requested
+    const encryptionKey = data.encryptionKey || data.keyArray || process.env.SBI_ENCRYPTION_KEY_BASE64;
+    const encryptTrans = aes.encrypt(singleRequest, encryptionKey);
+    const encryptMAId = aes.encrypt(multiAccountsStr, encryptionKey);
 
+    console.log("========== TRANSACTION ENCRYPTION LOGGING ==========");
+    console.log("UNENCRYPTED SINGLE REQUEST:", singleRequest);
     console.log("ENCRYPTED SINGLE REQUEST (EncryptTrans):", encryptTrans);
-    console.log("ENCRYPTED MULTI ACCOUNT DETAILS (MultiAccountInstructionDtls):", encryptMAId);
-
+    console.log("DECRYPTED VERIFICATION:", aes.decrypt(encryptTrans, encryptionKey));
+    console.log("--------------------------------------------------");
+    console.log("UNENCRYPTED MULTI ACCOUNT:", multiAccountsStr);
+    console.log("ENCRYPTED MULTI ACCOUNT (MultiAccountInstructionDtls):", encryptMAId);
+    console.log("DECRYPTED VERIFICATION:", aes.decrypt(encryptMAId, encryptionKey));
+    console.log("====================================================");
 
     let actionUrl = "https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener";
     if (process.env.SBI_ENVIRONMENT === "LIVE") {
@@ -150,7 +157,24 @@ exports.initiate = async (data) => {
       fields: {
         EncryptTrans: encryptTrans,
         MultiAccountInstructionDtls: encryptMAId,
-        merchIdVal: merchantId
+        MultiAccountInstructionDetails: encryptMAId,
+        multiAccountInstructionDetails: encryptMAId,
+        merchIdVal: merchantId,
+        // Individual fields for the form
+        merchId: merchantId,
+        operatingMode: operatingMode,
+        merchantCountry: merchantCountry,
+        merchantCurrency: merchantCurrency,
+        amount: TotalDueAmount,
+        otherDetail: Otherdetail,
+        successUrl: successUrl,
+        failUrl: failUrl,
+        aggregatorId: aggregatorId,
+        merchantOrderNo: merchantOrderNo,
+        merchantCustomerId: merchantCustomerId,
+        paymode: paymode,
+        accessMedium: accessMedium,
+        transactionSource: transactionSource
       }
     };
 
@@ -229,6 +253,11 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
     // Order inquiry API
     const apiResponse = await sbiePayClient.order.transactionOrders(payload);
 
+    console.log("========== SBI INQUIRY RESPONSE LOGGING ==========");
+    console.log("MERCHANT TXN ID:", merchantTxnId);
+    console.log("RAW API RESPONSE:", JSON.stringify(apiResponse, null, 2));
+    console.log("==================================================");
+
     // Check if valid bank response
     if (apiResponse && apiResponse.status === 1 && apiResponse.data && apiResponse.data.length > 0) {
       const bankData = apiResponse.data[0];
@@ -285,20 +314,36 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
 
 exports.decodeReturnPayload = async (encryptedPayload) => {
   try {
-    const sbiePayClient = new SBIEPayClient({
-      apiKey: process.env.SBI_MERCHANT_ID,
-      apiSecret: process.env.SBI_MERCHANT_KEY,
-      encryptionKey: process.env.SBI_ENCRYPTION_KEY_BASE64
-    }, 'SANDBOX', true);
+    const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
 
-    const decoded = await sbiePayClient.crypto.decodeCallback(encryptedPayload);
-    // decodeCallback returns an array, the first element has orderInfo and paymentInfo
-    if (decoded && decoded.length > 0) {
-      return decoded[0];
-    }
-    return null;
+    // Decrypt using Encryptor.js
+    const decrypted = aes.decrypt(encryptedPayload, encryptionKey);
+
+    console.log("========== SBI RESPONSE DECRYPTION LOGGING ==========");
+    console.log("ENCRYPTED TRANSACTION FROM SBI:", encryptedPayload);
+    console.log("DECRYPTED TRANSACTION FROM SBI:", decrypted);
+    console.log("====================================================");
+
+    // Split the pipe-separated string
+    // Standard SBI response format: 
+    // status|merchId|merchantOrderNo|sbiTxnId|amount|currency|customerName|bankCode|bankRefNo|...
+    const parts = decrypted.split('|');
+
+    // Map to the object structure expected by the controller
+    return {
+      orderInfo: {
+        orderStatus: parts[0],
+        orderRefNumber: parts[2],
+        orderAmount: parts[4]
+      },
+      paymentInfo: {
+        paymentRefNumber: parts[3] || parts[8], // try sbiTxnId or bankRefNo
+        orderAmount: parts[4]
+      },
+      rawDecrypted: decrypted
+    };
   } catch (error) {
-    console.error("Failed to decode return payload:", error);
+    console.error("Failed to decode return payload using Encryptor.js:", error);
     return null;
   }
 };

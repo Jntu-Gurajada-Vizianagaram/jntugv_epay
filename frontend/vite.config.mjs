@@ -8,8 +8,10 @@ export default defineConfig({
     https: true,
     port: 5173,
     proxy: {
-      // Proxy API calls to backend during development
-      '/api': 'http://localhost:4000'
+      '/api': {
+        target: 'https://localhost:4000',
+        secure: false
+      }
     }
 
   },

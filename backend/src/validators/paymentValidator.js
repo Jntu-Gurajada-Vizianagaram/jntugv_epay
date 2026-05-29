@@ -50,6 +50,17 @@ const PaymentInitiateSchema = z.object({
     address: z.string().optional(),
     multiAccountInstructionDtls: z.string().optional(),
     multiAccountInstructionDetails: z.string().optional(),
+    merchantId: z.string().optional(),
+    aggregatorId: z.string().optional(),
+    operatingMode: z.string().optional(),
+    merchantCountry: z.string().optional(),
+    merchantCurrency: z.string().optional(),
+    merchantCustomerId: z.string().optional(),
+    paymode: z.string().optional(),
+    accessMedium: z.string().optional(),
+    transactionSource: z.string().optional(),
+    successUrl: z.string().optional(),
+    failUrl: z.string().optional(),
 }).superRefine((data, ctx) => {
     // Add specific checks if necessary
     if (data.payment_category === "UNIVERSITY_EXAMINATION" && !data.semester) {

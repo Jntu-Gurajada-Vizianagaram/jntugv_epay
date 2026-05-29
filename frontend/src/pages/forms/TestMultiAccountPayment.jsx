@@ -11,6 +11,8 @@ export function TestMultiAccountPayment() {
     multiAccountInstructionDtls: "100|INR|GRPT||200|INR|GRPT",
   });
 
+  const [useMockBank, setUseMockBank] = useState(true);
+
 
 
   /*
@@ -41,8 +43,8 @@ const ecd = new Date().toISOString().slice(0, 19) + ".000";
 const expiryDate = new Date().toISOString().slice(0, 10) + "T23:59";
 
 const singleRequest = `${merchantId}|${operatingMode}|${merchantCountry}|${merchantCurrency}|${TotalDueAmount}|${Otherdetail}|${successUrl}|${failUrl}|${aggregatorId}|${merchantOrderNo}|${merchantCustomerId}|${paymode}|${accessMedium}|${transactionSource}`;
-
-const multiAccountInstructionDetails = "1|INR|AAT||25|INR|NEFT";
+-- 300 
+const multiAccountInstructionDetails = "1|INR|AAT||25|INR|NEFT"; -- "100|INR|GRPT||200|INR|NEFT"
 
 const singleParamResponse = aes.encrypt(singleRequest, keyArray);
 
@@ -112,6 +114,9 @@ return ObjMulReq;
     };
 
     const res = await initiatePayment(payload);
+    if (useMockBank) {
+      res.action = "https://localhost:4000/api/mock-bank/payment";
+    }
     setPaymentData(res);
   }
 
@@ -167,7 +172,20 @@ return ObjMulReq;
           </p>
         </div>
 
-        <button type="submit" className="primary w-full py-2 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700">
+        <div className="flex items-center gap-2.5 py-1.5 bg-slate-50 border border-slate-100 p-3 rounded-lg">
+          <input
+            type="checkbox"
+            id="useMockBank"
+            checked={useMockBank}
+            onChange={(e) => setUseMockBank(e.target.checked)}
+            className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
+          />
+          <label htmlFor="useMockBank" className="text-xs font-semibold text-slate-700 cursor-pointer select-none">
+            Use Local Mock Bank Gateway (Bypasses UAT "Wrong Source URL" constraint)
+          </label>
+        </div>
+
+        <button type="submit" className="primary w-full py-2.5 rounded bg-purple-600 text-white font-semibold hover:bg-purple-750 transition-colors shadow-sm">
           Initiate Split Payment
         </button>
       </form>

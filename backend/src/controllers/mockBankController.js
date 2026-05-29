@@ -1,8 +1,49 @@
 const axios = require("axios");
+const https = require("https");
+const AES256 = require("../utils/encryptor");
+const aes = new AES256();
 
 exports.processMockPayment = async (req, res) => {
   try {
-    const { merchantId, callbackUrl, returnUrl, merchantTxnId, amount, customerName, customerEmail, customerMobile, multiAccountInstructionDtls } = req.body;
+    let merchantId = req.body.merchantId;
+    let merchantTxnId = req.body.merchantTxnId;
+    let amount = req.body.amount;
+    let customerName = req.body.customerName;
+    let customerEmail = req.body.customerEmail;
+    let customerMobile = req.body.customerMobile;
+    let multiAccountInstructionDtls = req.body.multiAccountInstructionDtls;
+    let returnUrl = req.body.returnUrl;
+    let callbackUrl = req.body.callbackUrl;
+
+    // Support processing encrypted production-format forms locally
+    if (req.body.EncryptTrans) {
+      const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
+      try {
+        const decrypted = aes.decrypt(req.body.EncryptTrans, encryptionKey);
+        console.log("[MockBank] Decrypted EncryptTrans payload:", decrypted);
+        const parts = decrypted.split('|');
+        merchantId = parts[0];
+        amount = parts[4];
+        customerName = parts[5];
+        returnUrl = parts[6]; // SuccessURL from payload
+        merchantTxnId = parts[9];
+        // Set local server callback endpoint
+        callbackUrl = `${process.env.API_URL || "http://localhost:4000"}/api/payment/callback`;
+      } catch (err) {
+        console.error("[MockBank] Failed to decrypt EncryptTrans payload:", err.message);
+      }
+    }
+
+    if (req.body.MultiAccountInstructionDtls) {
+      const encryptionKey = process.env.SBI_ENCRYPTION_KEY_BASE64;
+      try {
+        multiAccountInstructionDtls = aes.decrypt(req.body.MultiAccountInstructionDtls, encryptionKey);
+        console.log("[MockBank] Decrypted MultiAccountInstructionDtls payload:", multiAccountInstructionDtls);
+      } catch (err) {
+        console.error("[MockBank] Failed to decrypt MultiAccountInstructionDtls payload:", err.message);
+      }
+    }
+
     const effectiveTxnId = merchantTxnId || "MOCK-" + Date.now();
     res.send(`
       <!DOCTYPE html>
@@ -89,7 +130,8 @@ exports.confirmMockPayment = async (req, res) => {
 
     // 1. Send Server-to-Server Callback
     try {
-      await axios.post(callbackUrl, payload);
+      const agent = new https.Agent({ rejectUnauthorized: false });
+      await axios.post(callbackUrl, payload, { httpsAgent: agent });
       console.log("[MockBank] Callback sent successfully");
     } catch (e) {
       console.warn("[MockBank] Callback failed to reach backend:", e.message);

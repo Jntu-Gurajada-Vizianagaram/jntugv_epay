@@ -40,6 +40,42 @@ app.get("/", (req, res) => {
   res.json({ ok: true, app: "jntugv-payments-backend" });
 });
 
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
+
+/* eslint-disable security/detect-non-literal-fs-filename */
+async function getSslCredentials() {
+  const certPath = path.resolve(__dirname, "certs");
+  const keyFile = path.resolve(certPath, "key.pem");
+  const certFile = path.resolve(certPath, "cert.pem");
+
+  if (!fs.existsSync(certPath)) {
+    fs.mkdirSync(certPath, { recursive: true });
+  }
+
+  if (fs.existsSync(keyFile) && fs.existsSync(certFile)) {
+    return {
+      key: fs.readFileSync(keyFile),
+      cert: fs.readFileSync(certFile)
+    };
+  }
+
+  console.log("Generating self-signed SSL certificate for backend...");
+  const selfsigned = require("selfsigned");
+  const attrs = [{ name: "commonName", value: "localhost" }];
+  const pems = await selfsigned.generate(attrs, { days: 365 });
+
+  fs.writeFileSync(keyFile, pems.private);
+  fs.writeFileSync(certFile, pems.cert);
+
+  return {
+    key: pems.private,
+    cert: pems.cert
+  };
+}
+/* eslint-enable security/detect-non-literal-fs-filename */
+
 // Start Server
 const PORT = process.env.PORT || 4000;
 
@@ -53,8 +89,10 @@ const PORT = process.env.PORT || 4000;
       console.log("Database synced");
     }
 
-    app.listen(PORT, () => {
-      console.log("Backend running on port", PORT);
+    const sslOptions = await getSslCredentials();
+
+    https.createServer(sslOptions, app).listen(PORT, () => {
+      console.log("Secure Backend running on port", PORT);
     });
   } catch (err) {
     console.error("Startup error", err);

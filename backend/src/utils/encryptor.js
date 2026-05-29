@@ -57,82 +57,22 @@ namespace WebApplication2
 const crypto = require('crypto');
 
 class AES256 {
-
-    getCipherConfig(secretKey) {
-
-        // 32 bytes = 256 bits
-        const keyBytes = Buffer.alloc(32);
-
-        const secretKeyBytes = Buffer.from(secretKey, 'utf8');
-
-        secretKeyBytes.copy(
-            keyBytes,
-            0,
-            0,
-            Math.min(secretKeyBytes.length, keyBytes.length)
-        );
-
-        return {
-            key: keyBytes,
-            iv: keyBytes.slice(0, 16) // IV must be 16 bytes for AES-CBC
-        };
+    // Encrypts plaintext using AES 128bit key and CBC mode
+    encrypt(input, key) {
+        const iv = key.slice(0, 16);
+        const cipher = crypto.createCipheriv("aes-128-cbc", key.slice(0, 16), iv);
+        let encrypted = cipher.update(input, 'utf8', 'base64');
+        encrypted += cipher.final('base64');
+        return encrypted;
     }
 
-    encryptBytes(plainBytes, config) {
-
-        const cipher = crypto.createCipheriv(
-            'aes-256-cbc',
-            config.key,
-            config.iv
-        );
-
-        return Buffer.concat([
-            cipher.update(plainBytes),
-            cipher.final()
-        ]);
-    }
-
-    decryptBytes(encryptedBytes, config) {
-
-        const decipher = crypto.createDecipheriv(
-            'aes-256-cbc',
-            config.key,
-            config.iv
-        );
-
-        return Buffer.concat([
-            decipher.update(encryptedBytes),
-            decipher.final()
-        ]);
-    }
-
-    // Encrypt plaintext -> Base64
-    encrypt(plainText, key) {
-
-        const plainBytes = Buffer.from(plainText, 'utf8');
-
-        const encrypted = this.encryptBytes(
-            plainBytes,
-            this.getCipherConfig(key)
-        );
-
-        return encrypted.toString('base64');
-    }
-
-    // Decrypt Base64 -> Plaintext
-    decrypt(encryptedText, key) {
-
-        const encryptedBytes = Buffer.from(
-            encryptedText,
-            'base64'
-        );
-
-        const decrypted = this.decryptBytes(
-            encryptedBytes,
-            this.getCipherConfig(key)
-        );
-
-        return decrypted.toString('utf8');
+    // Decrypts cipherText using AES 128bit key and CBC mode
+    decrypt(cipherText, key) {
+        const iv = key.slice(0, 16);
+        const decipher = crypto.createDecipheriv("aes-128-cbc", key.slice(0, 16), iv);
+        let decryptedData = decipher.update(cipherText, 'base64', 'utf8');
+        decryptedData += decipher.final('utf8');
+        return decryptedData;
     }
 }
 
