@@ -1,0 +1,27 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 185.199.52.99
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/jntugv-pay/htdocs/pay.jntugv.edu.in/
+            git stash
+            git pull origin main
+            npm run install-all
+            npm run build
+            
+            # Restart backend (modify according to your specific setup, e.g. pm2 or systemctl)
+            pm2 restart all || echo "PM2 not found or no process to restart"

@@ -67,5 +67,12 @@ Detailed API documentation for payment initiation endpoints can be found in [API
 4. **Callback**: SBI server calls Backend webhook (`/api/payment/callback`) to update status.
 5. **Return**: User is redirected back to Frontend (`/payment/return`) to see status.
 
+## Deployment
+This project uses GitHub Actions for continuous deployment. Any code pushed to the `main` branch will automatically be deployed to the production server at `185.199.52.99`.
+
+### GitHub Secrets Required
+To enable the auto-deployment, ensure the following secret is configured in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+- `SSH_PRIVATE_KEY`: The SSH private key for `root` access to the production server.
+
 ## Contact
 For issues, please contact the JNTU-GV IT department.
