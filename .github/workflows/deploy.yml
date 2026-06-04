@@ -22,8 +22,11 @@ jobs:
             
             # Check if repo exists, clone if not
             if [ ! -d ".git" ]; then
-              echo "Cloning repository..."
-              git clone https://github.com/Jntu-Gurajada-Vizianagaram/jntugv_epay .
+              echo "Initializing repository..."
+              git init
+              git remote add origin https://github.com/Jntu-Gurajada-Vizianagaram/jntugv_epay
+              git fetch
+              git checkout -t origin/main -f
             else
               echo "Pulling latest changes..."
               git stash
