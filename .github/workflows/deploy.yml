@@ -18,12 +18,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/jntugv-pay/htdocs/pay.jntugv.edu.in/
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/Jntu-Gurajada-Vizianagaram/jntugv_epay .
-            else
-              git stash
-              git pull origin main
-            fi
+            git stash
+            git pull origin main
             npm run install-all
             npm run build
             
