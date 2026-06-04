@@ -35,5 +35,6 @@ jobs:
             npm run install-all
             npm run build
             
-            # Restart backend
-            pm2 restart all || echo "PM2 not found or no process to restart"
+            # Start or reload both Frontend and Backend via PM2 ecosystem
+            pm2 start ecosystem.config.js --update-env
+            pm2 save
