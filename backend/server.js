@@ -14,12 +14,38 @@ const app = express();
 
 // Security
 app.use(helmet({
+  referrerPolicy: { policy: "origin" },
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"], // Scripts are self-only (we removed inline)
-      formAction: ["'self'", "http://localhost:5173", "https://pay.jntugv.edu.in"], // Allow POST to frontend
+      formAction: [
+        "'self'",
+        "http://localhost:5173",
+        "https://pay.jntugv.edu.in",
+        "https://sbiepay.sbi.co.in",
+        "https://test.epay.sbiuat.bank.in",
+        "https://test.sbiepay.sbi"
+      ], // Allow POST to frontend and SBIePay domains
       connectSrc: ["'self'", "http://localhost:4000", "http://localhost:5173"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://www.test.sbiepay.com",
+        "https://sbiepay.sbi.co.in",
+        "https://test.epay.sbiuat.bank.in",
+        "https://test.sbiepay.sbi",
+        "https://*.sbi",
+        "https://*.sbi.co.in",
+        "https://*.sbiepay.sbi",
+        "https://*.sbiepay.com",
+        "https://*.sbiuat.bank.in"
+      ],
+      fontSrc: [
+        "'self'",
+        "https:",
+        "data:"
+      ]
     }
   }
 }));
