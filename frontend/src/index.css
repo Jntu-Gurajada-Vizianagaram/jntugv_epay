@@ -57,3 +57,148 @@ body{
     gap:20px;
     align-items:flex-start;
 }
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  body {
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .receipt-print-root,
+  .receipt-print-root * {
+    visibility: visible !important;
+  }
+
+  .receipt-print-root {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  .receipt-print-card {
+    width: 184mm !important;
+    max-width: 184mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .receipt-print-card,
+  .receipt-print-card > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .receipt-print-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 14mm !important;
+    row-gap: 4mm !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+  }
+
+  .receipt-print-grid > .col-span-1,
+  .receipt-print-grid > .md\:col-span-2,
+  .receipt-print-grid > .col-span-1.md\:col-span-2 {
+    grid-column: 1 / -1 !important;
+  }
+
+  .receipt-print-app-name {
+    text-align: center !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    color: #1d4ed8 !important;
+    margin-bottom: 3mm !important;
+    padding: 2mm 0 !important;
+    border-radius: 2mm !important;
+    background: #eff6ff !important;
+    border: 0.4mm solid #bfdbfe !important;
+  }
+
+  .receipt-print-letterhead {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 2mm !important;
+    color: #0f172a !important;
+  }
+
+  .receipt-print-top-logo {
+    width: 22mm !important;
+    height: 22mm !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  .receipt-print-footer-brand {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7mm !important;
+    margin-bottom: 5mm !important;
+    padding-top: 4mm !important;
+    border-top: 0.35mm solid #bfdbfe !important;
+  }
+
+  .receipt-print-footer-logo {
+    width: 15mm !important;
+    height: 15mm !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  .receipt-print-sbi-logo {
+    width: 31mm !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  .receipt-print-card h1 {
+    color: #1e3a8a !important;
+  }
+
+  .receipt-print-card h2 {
+    color: #047857 !important;
+  }
+
+  .receipt-print-grid {
+    border-top: 0.35mm solid #dbeafe !important;
+    border-bottom: 0.35mm solid #dbeafe !important;
+    padding: 5mm 0 !important;
+  }
+}

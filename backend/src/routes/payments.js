@@ -13,6 +13,7 @@ router.get("/history/:studentRoll", paymentController.getPaymentHistory);
 router.post("/decrypt", paymentController.decryptPaymentData);
 
 router.get("/return", paymentController.clientReturnHandler);
+router.post("/return", paymentController.clientReturnHandler);
 
 router.get("/payment-response/:merchantTxnId", paymentController.getPaymentStatus);
 

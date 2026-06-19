@@ -33,10 +33,10 @@ export function PaymentReturn() {
 
         if (resp.status === "SUCCESS") {
           setMsg("Payment successful");
-          setTimeout(() => navigate("/payment/success"), 1000);
+          setTimeout(() => navigate(`/payment/success?merchantTxnId=${encodeURIComponent(merchantTxnId)}`), 1000);
         } else if (resp.status === "FAILED") {
           setMsg("Payment failed");
-          setTimeout(() => navigate("/payment/error"), 1000);
+          setTimeout(() => navigate(`/payment/failure?merchantTxnId=${encodeURIComponent(merchantTxnId)}`), 1000);
         } else {
           setMsg("Pending settlement. Please wait.");
         }

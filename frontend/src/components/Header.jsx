@@ -58,6 +58,11 @@ export function Header() {
             <DesktopNav to="/admissions" label="Admissions" />
             <DesktopNav to="/history" label="History" />
             <DesktopNav to="/about" label="About" />
+            <DesktopNav to="/test-sbi-epay" label="Test SBI ePay" />
+            <DesktopNav to="/test-multi-account" label="Test Multi-Account" />
+            <DesktopNav to="/faq" label="FAQ" />
+            <DesktopNav to="/terms" label="Terms" />
+            <DesktopNav to="/privacy" label="Privacy" />
             <DesktopNav to="/contact" label="Contact" />
           </nav>
 

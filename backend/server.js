@@ -22,12 +22,14 @@ app.use(helmet({
       formAction: [
         "'self'",
         "http://localhost:5173",
+        "https://localhost:5173",
+        "https://localhost:4000",
         "https://pay.jntugv.edu.in",
         "https://sbiepay.sbi.co.in",
         "https://test.epay.sbiuat.bank.in",
         "https://test.sbiepay.sbi"
       ], // Allow POST to frontend and SBIePay domains
-      connectSrc: ["'self'", "http://localhost:4000", "http://localhost:5173"],
+      connectSrc: ["'self'", "http://localhost:4000", "https://localhost:4000", "http://localhost:5173", "https://localhost:5173"],
       imgSrc: [
         "'self'",
         "data:",

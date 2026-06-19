@@ -62,6 +62,11 @@ export function Home() {
         <CardTile to="/affiliation" title="Affiliation Fees" desc="College affiliation & inspections" icon="🏛️" accent="rose" />
         <CardTile to="/challan" title="Direct Challans" desc="Other challans, fines & miscellaneous" icon="💳" accent="teal" />
         <CardTile to="/test-multi-account" title="Test Multi-Account" desc="Test splits (For dev only)" icon="🧪" accent="gray" />
+       <CardTile to="/test-sbi-epay" title="Test SBI ePay" desc="Test SBI ePay flow (For dev only)" icon="🧪" accent="gray" />
+        <CardTile to="/faq" title="FAQ" desc="Frequently asked questions" icon="❓" accent="indigo" />
+        <CardTile to="/terms" title="Terms & Conditions" desc="Legal terms and conditions" icon="📄" accent="green" />
+        <CardTile to="/privacy" title="Privacy Policy" desc="Data protection and privacy rights" icon="🔒" accent="yellow" />
+
       </div>
 
 

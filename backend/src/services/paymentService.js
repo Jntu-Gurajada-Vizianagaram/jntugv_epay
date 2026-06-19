@@ -2,7 +2,184 @@ const db = require("../models");
 const Payment = db.Payment;
 const { SBIEPayClient } = require("epay_nodejs_sdk");
 const AES256 = require("../utils/encryptor");
+const fs = require("fs/promises");
+const path = require("path");
 const aes = new AES256();
+
+const verificationLogPath = path.resolve(__dirname, "../../sbiepay-integration-verification-log.txt");
+
+const nowIst = () => new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata",
+  hour12: false
+});
+
+const toLogText = (value) => {
+  if (value === undefined || value === null || value === "") return "N/A";
+  if (typeof value === "string") return value;
+  return JSON.stringify(value, null, 2);
+};
+
+async function appendVerificationLog(title, lines) {
+  const body = [
+    "",
+    "===============================================================================",
+    `LIVE LOG - ${title}`,
+    "===============================================================================",
+    `Timestamp: ${nowIst()} IST`,
+    ...lines.map(([label, value]) => `${label}: ${toLogText(value)}`)
+  ].join("\n");
+
+  try {
+    await fs.appendFile(verificationLogPath, `${body}\n`, "utf8");
+  } catch (error) {
+    console.warn("Unable to write SBIePay verification log:", error.message);
+  }
+}
+
+const successStatuses = new Set(["SUCCESS", "PAID"]);
+const failedStatuses = new Set(["FAIL", "FAILED", "ABORT", "ABORTED"]);
+
+function mapBankStatus(status) {
+  const normalized = String(status || "").toUpperCase();
+  if (successStatuses.has(normalized)) return "SUCCESS";
+  if (failedStatuses.has(normalized)) return "FAILED";
+  if (normalized === "PENDING") return "PENDING";
+  if (normalized === "REFUNDED") return "REFUNDED";
+  return "PENDING";
+}
+
+function parseFeeGst(totalFeeGst) {
+  const [serviceChargeRaw, gstRaw] = String(totalFeeGst || "").split("^");
+  const serviceChargePaid = serviceChargeRaw && serviceChargeRaw !== "NA" ? serviceChargeRaw : "0.00";
+  const gstPaid = gstRaw && gstRaw !== "NA" ? gstRaw : "0.00";
+  const totalChargesPaid = (
+    (Number.parseFloat(serviceChargePaid) || 0) +
+    (Number.parseFloat(gstPaid) || 0)
+  ).toFixed(2);
+
+  return {
+    serviceChargePaid,
+    gstPaid,
+    totalChargesPaid
+  };
+}
+
+function parseSbiBrowserResponse(decrypted) {
+  const parts = String(decrypted || "").split("|");
+  const statusCandidates = ["SUCCESS", "PAID", "FAIL", "FAILED", "PENDING", "ABORT", "ABORTED", "REFUNDED"];
+  const statusIndex = parts.findIndex((part) => statusCandidates.includes(String(part || "").toUpperCase()));
+
+  if (statusIndex === 2) {
+    return {
+      format: "MERCHANT_ORDER_FIRST",
+      merchantTxnId: parts[0],
+      atrn: parts[1],
+      status: parts[2],
+      amount: parts[3],
+      currency: parts[4],
+      payMode: parts[5],
+      customerName: parts[6],
+      statusDescription: parts[7],
+      bankCode: parts[8],
+      bankReferenceNumber: parts[9],
+      transactionDate: parts[10],
+      country: parts[11],
+      responseCode: parts[12],
+      merchantId: parts[13],
+      totalFeeGst: parts[14],
+      ...parseFeeGst(parts[14]),
+      rawParts: parts
+    };
+  }
+
+  if (statusIndex === 0) {
+    return {
+      format: "STATUS_FIRST",
+      status: parts[0],
+      merchantId: parts[1],
+      merchantTxnId: parts[2],
+      sbiePayRefId: parts[3],
+      amount: parts[4],
+      currency: parts[5],
+      customerName: parts[6],
+      bankCode: parts[7],
+      bankReferenceNumber: parts[8],
+      transactionDate: parts[9],
+      country: parts[10],
+      responseCode: parts[11],
+      totalFeeGst: parts[12],
+      ...parseFeeGst(parts[12]),
+      rawParts: parts
+    };
+  }
+
+  return {
+    format: "UNKNOWN",
+    status: statusIndex >= 0 ? parts[statusIndex] : "PENDING",
+    merchantTxnId: parts[0],
+    amount: parts[3] || parts[4],
+    rawParts: parts
+  };
+}
+
+function normalizeGatewayPayload(payload = {}) {
+  const charges = parseFeeGst(payload.totalFeeGst);
+  const bankReferenceNumber =
+    payload.bankReferenceNumber ||
+    payload.bankTxnId ||
+    payload.sbiePayRefId ||
+    payload.atrn ||
+    payload.paymentRefNumber ||
+    "N/A";
+
+  return {
+    ...payload,
+    status: String(payload.status || payload.orderStatus || "PENDING").toUpperCase(),
+    amount: payload.amount || payload.orderAmount,
+    bankTxnId: payload.bankTxnId || bankReferenceNumber,
+    bankReferenceNumber,
+    atrn: payload.atrn || payload.sbiePayRefId || payload.paymentRefNumber,
+    transactionNumber: payload.transactionNumber || payload.merchantTxnId,
+    paymentId: payload.paymentId || payload.transaction_id,
+    serviceChargePaid: payload.serviceChargePaid || charges.serviceChargePaid,
+    gstPaid: payload.gstPaid || charges.gstPaid,
+    totalChargesPaid: payload.totalChargesPaid || charges.totalChargesPaid
+  };
+}
+
+async function buildReturnPayload(decrypted, encryptedPayload) {
+  const parsed = parseSbiBrowserResponse(decrypted);
+
+  await appendVerificationLog("BROWSER RESPONSE", [
+    ["Encrypted Browser Response", encryptedPayload],
+    ["Decrypted Browser Response", decrypted],
+    ["Detected Response Format", parsed.format],
+    ["Transaction Status", parsed.status],
+    ["Merchant ID", parsed.merchantId],
+    ["Merchant Order Number", parsed.merchantTxnId],
+    ["SBIePay Reference ID / ATRN", parsed.sbiePayRefId || parsed.atrn],
+    ["Amount", parsed.amount],
+    ["Currency", parsed.currency],
+    ["Status Description", parsed.statusDescription],
+    ["Bank Code", parsed.bankCode],
+    ["Bank Reference Number", parsed.bankReferenceNumber],
+    ["Transaction Date", parsed.transactionDate]
+  ]);
+
+  return {
+    orderInfo: {
+      orderStatus: parsed.status,
+      orderRefNumber: parsed.merchantTxnId,
+      orderAmount: parsed.amount
+    },
+    paymentInfo: {
+      paymentRefNumber: parsed.bankReferenceNumber || parsed.sbiePayRefId || parsed.atrn,
+      orderAmount: parsed.amount
+    },
+    parsed,
+    rawDecrypted: decrypted
+  };
+}
 
 exports.initiate = async (data) => {
 
@@ -81,9 +258,12 @@ exports.initiate = async (data) => {
   // FIXED URL
   const cleanUrl = (url) => (url ? url.replace(/\/$/, "") : "");
 
+  const apiBaseUrl = cleanUrl(process.env.API_URL) || "https://localhost:4000";
+
   // SBI_PUSH_URL is the official term for the server-to-server callback
-  const callbackUrl = cleanUrl(process.env.SBI_PUSH_URL) || cleanUrl(process.env.CALLBACK_URL) || `${process.env.API_URL}/api/payment/callback`;
-  const returnUrl = cleanUrl(process.env.RETURN_URL) || `${process.env.API_URL}/api/payment/return`;
+  const callbackUrl = cleanUrl(process.env.SBI_PUSH_URL) || cleanUrl(process.env.CALLBACK_URL) || `${apiBaseUrl}/api/payment/callback`;
+  const returnUrl = cleanUrl(process.env.RETURN_URL) || `${apiBaseUrl}/api/payment/return`;
+  const isBankHostedTestPage = (url) => /sbiuat\.bank\.in\/secure\/(?:sucess3|fail3)\.jsp/i.test(String(url || ""));
 
   try {
     // Using LIVE TESTKIT credentials and Hosted Form code as requested for Multi Account Settlement
@@ -102,10 +282,10 @@ exports.initiate = async (data) => {
     const TotalDueAmount = String(data.amount);
     const Otherdetail = data.student_name || "NA";
 
-    // Front-end URLs for redirection
-    const appBaseUrl = process.env.APP_BASE_URL || "http://localhost:5173";
-    const successUrl = data.successUrl || `${appBaseUrl}/payment/success`;
-    const failUrl = data.failUrl || `${appBaseUrl}/payment/failure`;
+    // SBI sends encrypted browser responses to these URLs. Route through the backend
+    // first so we can decrypt, store, and then redirect to the correct client page.
+    const successUrl = data.successUrl && !isBankHostedTestPage(data.successUrl) ? data.successUrl : returnUrl;
+    const failUrl = data.failUrl && !isBankHostedTestPage(data.failUrl) ? data.failUrl : returnUrl;
 
     const merchantOrderNo = merchantTxnId;
     const merchantCustomerId = data.merchantCustomerId || process.env.SBI_MERCHANT_CUSTOMER_ID || "2";
@@ -150,6 +330,21 @@ exports.initiate = async (data) => {
       actionUrl = "https://sbiepay.sbi.co.in/secure/AggregatorHostedListener";
     }
 
+    await appendVerificationLog("TRANSACTION REQUEST", [
+      ["Merchant Order Number", merchantOrderNo],
+      ["Merchant ID", merchantId],
+      ["Aggregator ID", aggregatorId],
+      ["Amount", TotalDueAmount],
+      ["Action URL", actionUrl],
+      ["Plain Transaction Request", singleRequest],
+      ["EncryptTrans", encryptTrans],
+      ["Plain Multi Account Instruction", multiAccountsStr],
+      ["MultiAccountInstructionDtls", encryptMAId],
+      ["Form Field merchIdVal", merchantId],
+      ["Success URL", successUrl],
+      ["Failure URL", failUrl]
+    ]);
+
     return {
       action: actionUrl,
       method: "POST",
@@ -185,27 +380,83 @@ exports.initiate = async (data) => {
 };
 
 exports.callback = async (body) => {
+  let callbackBody = body || {};
+
+  const encryptedFinalResponse =
+    callbackBody.encryptedPaymentFinalResponse ||
+    callbackBody.EncryptedData ||
+    callbackBody.encryptedData ||
+    callbackBody.encData ||
+    callbackBody.EncData ||
+    callbackBody.encryptedResponse;
+  const plainFinalResponse =
+    callbackBody.Response ||
+    callbackBody.response ||
+    callbackBody.paymentResponse ||
+    callbackBody.PaymentResponse;
+
+  if (!callbackBody.merchantTxnId && (encryptedFinalResponse || plainFinalResponse)) {
+    const decodedPayload = encryptedFinalResponse
+      ? await exports.decodeReturnPayload(encryptedFinalResponse)
+      : await exports.parseReturnPayload(plainFinalResponse);
+
+    if (decodedPayload && decodedPayload.orderInfo) {
+      const parsed = decodedPayload.parsed || {};
+      callbackBody = normalizeGatewayPayload({
+        merchantTxnId: decodedPayload.orderInfo.orderRefNumber,
+        amount: decodedPayload.orderInfo.orderAmount,
+        status: decodedPayload.orderInfo.orderStatus,
+        bankTxnId: decodedPayload.paymentInfo ? decodedPayload.paymentInfo.paymentRefNumber : undefined,
+        merchantId: parsed.merchantId,
+        atrn: parsed.atrn,
+        sbiePayRefId: parsed.sbiePayRefId,
+        currency: parsed.currency,
+        payMode: parsed.payMode,
+        customerName: parsed.customerName,
+        statusDescription: parsed.statusDescription,
+        bankCode: parsed.bankCode,
+        bankReferenceNumber: parsed.bankReferenceNumber,
+        transactionDate: parsed.transactionDate,
+        country: parsed.country,
+        responseCode: parsed.responseCode,
+        totalFeeGst: parsed.totalFeeGst,
+        rawResponse: decodedPayload.rawDecrypted
+      });
+    }
+  }
+
+  const normalizedBody = normalizeGatewayPayload(callbackBody);
   const txn = await Payment.findOne({
-    where: { merchantTxnId: body.merchantTxnId },
+    where: { merchantTxnId: normalizedBody.merchantTxnId },
   });
 
-  if (!txn) return;
+  if (!txn) {
+    await appendVerificationLog("CALLBACK RESPONSE - TRANSACTION NOT FOUND", [
+      ["Raw Callback Body", callbackBody]
+    ]);
+    return;
+  }
 
-  const bankStatusMap = {
-    'PAID': 'SUCCESS',
-    'SUCCESS': 'SUCCESS',
-    'FAIL': 'FAILED',
-    'FAILED': 'FAILED',
-    'PENDING': 'PENDING',
-    'ABORTED': 'FAILED',
-    'REFUNDED': 'REFUNDED'
-  };
+  normalizedBody.paymentId = txn.transaction_id;
+  normalizedBody.transactionNumber = normalizedBody.merchantTxnId;
 
-  const statusStr = (body.status || "").toUpperCase();
-  txn.status = bankStatusMap[statusStr] || 'PENDING';
-  txn.bankTxnId = body.bankTxnId;
+  txn.status = mapBankStatus(normalizedBody.status);
+  txn.bankTxnId = normalizedBody.bankTxnId || normalizedBody.bankReferenceNumber || normalizedBody.sbiePayRefId || normalizedBody.atrn;
+  txn.payment_mode = normalizedBody.paymentMode || normalizedBody.payMode || txn.payment_mode;
+  txn.gateway_response = JSON.stringify(normalizedBody);
 
   await txn.save();
+
+  await appendVerificationLog("CALLBACK RESPONSE", [
+    ["Merchant Order Number", normalizedBody.merchantTxnId],
+    ["Raw Callback Body", callbackBody],
+    ["Incoming Bank Status", normalizedBody.status],
+    ["Mapped Local Status", txn.status],
+    ["Bank Transaction ID", txn.bankTxnId],
+    ["Service Charges Paid", normalizedBody.serviceChargePaid],
+    ["GST Paid", normalizedBody.gstPaid],
+    ["Gateway Response Stored", txn.gateway_response]
+  ]);
 };
 
 exports.getHistory = async (student_roll) => {
@@ -235,7 +486,33 @@ exports.getStatus = async (merchantTxnId) => {
   delete admission.id; delete admission.paymentId;
   delete affiliation.id; delete affiliation.paymentId;
 
-  return { ...txn, ...exam, ...phd, ...cert, ...admission, ...affiliation };
+  let gatewayResponse = {};
+  try {
+    gatewayResponse = txn.gateway_response ? JSON.parse(txn.gateway_response) : {};
+  } catch {
+    gatewayResponse = {};
+  }
+
+  const normalizedGateway = normalizeGatewayPayload({
+    ...gatewayResponse,
+    merchantTxnId: txn.merchantTxnId,
+    amount: gatewayResponse.amount || txn.amount,
+    status: gatewayResponse.status || txn.status,
+    bankTxnId: gatewayResponse.bankTxnId || txn.bankTxnId,
+    paymentId: txn.transaction_id,
+    transactionNumber: txn.merchantTxnId
+  });
+
+  return {
+    ...txn,
+    ...exam,
+    ...phd,
+    ...cert,
+    ...admission,
+    ...affiliation,
+    ...normalizedGateway,
+    gateway_response_details: normalizedGateway
+  };
 };
 
 exports.verifyTransactionWithBank = async (merchantTxnId) => {
@@ -246,9 +523,23 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
   }, 'SANDBOX', true);
 
   try {
+    const existingTxn = await Payment.findOne({ where: { merchantTxnId } });
+    const merchantId = process.env.SBI_MERCHANT_ID;
+    const aggregatorId = process.env.SBI_AGGREGATOR_ID || "SBIEPAY";
+    const amount = existingTxn ? String(existingTxn.amount) : "N/A";
+    const queryRequest = `|${merchantId}|${merchantTxnId}|${amount}`;
+
     const payload = {
       orderRefNumber: merchantTxnId
     };
+
+    await appendVerificationLog("DOUBLE VERIFICATION REQUEST", [
+      ["Merchant Order Number", merchantTxnId],
+      ["queryRequest", queryRequest],
+      ["aggregatorId", aggregatorId],
+      ["merchantId", merchantId],
+      ["SDK Payload", payload]
+    ]);
 
     // Order inquiry API
     const apiResponse = await sbiePayClient.order.transactionOrders(payload);
@@ -263,19 +554,10 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
       const bankData = apiResponse.data[0];
 
       // Update local BD if status changed from bank
-      const txn = await Payment.findOne({ where: { merchantTxnId } });
+      const txn = existingTxn || await Payment.findOne({ where: { merchantTxnId } });
       if (txn && bankData.orderStatus) {
         // Safe mapping of SBI status to DB status
-        const bankStatusMap = {
-          'PAID': 'SUCCESS',
-          'SUCCESS': 'SUCCESS',
-          'FAIL': 'FAILED',
-          'FAILED': 'FAILED',
-          'PENDING': 'PENDING',
-          'ABORTED': 'FAILED',
-          'REFUNDED': 'REFUNDED'
-        };
-        const mappedStatus = bankStatusMap[bankData.orderStatus.toUpperCase()] || txn.status;
+        const mappedStatus = mapBankStatus(bankData.orderStatus);
 
         if (txn.status !== mappedStatus) {
           txn.status = mappedStatus;
@@ -286,6 +568,15 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
         }
       }
 
+      await appendVerificationLog("DOUBLE VERIFICATION RESPONSE", [
+        ["Merchant Order Number", merchantTxnId],
+        ["Raw Bank API Response", apiResponse],
+        ["Bank Status", bankData.orderStatus],
+        ["Bank Transaction ID", bankData.paymentInfo ? bankData.paymentInfo.paymentRefNumber : null],
+        ["Local DB Status", txn ? txn.status : null],
+        ["Verification Conclusion", txn && bankData.orderStatus ? "BANK RESPONSE RECEIVED" : "BANK RESPONSE RECEIVED - LOCAL TRANSACTION NOT FOUND"]
+      ]);
+
       return {
         merchantTxnId,
         isVerified: true,
@@ -295,6 +586,12 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
         fullBankResponse: bankData
       };
     } else {
+      await appendVerificationLog("DOUBLE VERIFICATION RESPONSE - EMPTY OR INVALID", [
+        ["Merchant Order Number", merchantTxnId],
+        ["Raw Bank API Response", apiResponse],
+        ["Verification Conclusion", "INVALID OR EMPTY RESPONSE FROM BANK"]
+      ]);
+
       return {
         merchantTxnId,
         isVerified: false,
@@ -304,6 +601,12 @@ exports.verifyTransactionWithBank = async (merchantTxnId) => {
     }
   } catch (error) {
     console.warn("verifyTransactionWithBank error:", error.message);
+    await appendVerificationLog("DOUBLE VERIFICATION ERROR", [
+      ["Merchant Order Number", merchantTxnId],
+      ["Error", error.message],
+      ["Verification Conclusion", "SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK"]
+    ]);
+
     return {
       merchantTxnId,
       isVerified: false,
@@ -324,26 +627,18 @@ exports.decodeReturnPayload = async (encryptedPayload) => {
     console.log("DECRYPTED TRANSACTION FROM SBI:", decrypted);
     console.log("====================================================");
 
-    // Split the pipe-separated string
-    // Standard SBI response format: 
-    // status|merchId|merchantOrderNo|sbiTxnId|amount|currency|customerName|bankCode|bankRefNo|...
-    const parts = decrypted.split('|');
-
-    // Map to the object structure expected by the controller
-    return {
-      orderInfo: {
-        orderStatus: parts[0],
-        orderRefNumber: parts[2],
-        orderAmount: parts[4]
-      },
-      paymentInfo: {
-        paymentRefNumber: parts[3] || parts[8], // try sbiTxnId or bankRefNo
-        orderAmount: parts[4]
-      },
-      rawDecrypted: decrypted
-    };
+    return await buildReturnPayload(decrypted, encryptedPayload);
   } catch (error) {
     console.error("Failed to decode return payload using Encryptor.js:", error);
+    return null;
+  }
+};
+
+exports.parseReturnPayload = async (plainPayload) => {
+  try {
+    return await buildReturnPayload(plainPayload, null);
+  } catch (error) {
+    console.error("Failed to parse plain SBI return payload:", error);
     return null;
   }
 };

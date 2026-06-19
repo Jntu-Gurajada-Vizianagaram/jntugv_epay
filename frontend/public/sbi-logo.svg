@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 72" role="img" aria-labelledby="title">
+  <title id="title">SBI Logo</title>
+  <rect width="220" height="72" fill="white"/>
+  <circle cx="36" cy="36" r="24" fill="#1f6fbf"/>
+  <circle cx="36" cy="31" r="7" fill="white"/>
+  <rect x="33" y="31" width="6" height="23" rx="3" fill="white"/>
+  <text x="76" y="48" fill="#1f6fbf" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">SBI</text>
+</svg>

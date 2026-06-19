@@ -213,30 +213,58 @@ exports.decryptPaymentData = async (req, res) => {
 };
 
 exports.clientReturnHandler = async (req, res) => {
-  const frontendBase = process.env.APP_BASE_URL || "http://localhost:5173";
+  const frontendBase = process.env.APP_BASE_URL || "https://localhost:5173";
   try {
-    const encryptedFinalResponse = req.query.encryptedPaymentFinalResponse;
+    const returnPayload = { ...(req.query || {}), ...(req.body || {}) };
+    const encryptedFinalResponse =
+      returnPayload.encryptedPaymentFinalResponse ||
+      returnPayload.EncryptedData ||
+      returnPayload.encryptedData ||
+      returnPayload.encData ||
+      returnPayload.EncData ||
+      returnPayload.encryptedResponse;
+    const plainFinalResponse =
+      returnPayload.Response ||
+      returnPayload.response ||
+      returnPayload.paymentResponse ||
+      returnPayload.PaymentResponse;
 
-    if (encryptedFinalResponse) {
-      const decodedPayload = await paymentService.decodeReturnPayload(encryptedFinalResponse);
+    if (encryptedFinalResponse || plainFinalResponse) {
+      const decodedPayload = encryptedFinalResponse
+        ? await paymentService.decodeReturnPayload(encryptedFinalResponse)
+        : await paymentService.parseReturnPayload(plainFinalResponse);
       if (decodedPayload && decodedPayload.orderInfo) {
         const { orderStatus, orderRefNumber, orderAmount } = decodedPayload.orderInfo;
         const paymentInfoAmount = decodedPayload.paymentInfo ? decodedPayload.paymentInfo.orderAmount : "N/A";
+        const parsed = decodedPayload.parsed || {};
 
         const payloadData = {
           merchantTxnId: orderRefNumber,
           amount: orderAmount || paymentInfoAmount || "N/A",
-          status: (orderStatus || "").toUpperCase()
+          status: (orderStatus || "").toUpperCase(),
+          bankTxnId: decodedPayload.paymentInfo ? decodedPayload.paymentInfo.paymentRefNumber : "N/A",
+          merchantId: parsed.merchantId,
+          atrn: parsed.atrn,
+          sbiePayRefId: parsed.sbiePayRefId,
+          currency: parsed.currency,
+          payMode: parsed.payMode,
+          customerName: parsed.customerName,
+          statusDescription: parsed.statusDescription,
+          bankCode: parsed.bankCode,
+          bankReferenceNumber: parsed.bankReferenceNumber,
+          transactionDate: parsed.transactionDate,
+          country: parsed.country,
+          responseCode: parsed.responseCode,
+          totalFeeGst: parsed.totalFeeGst,
+          rawResponse: decodedPayload.rawDecrypted
         };
 
         const encrypted = encryptData(payloadData);
 
         // Force local DB update just in case callback is delayed
-        await paymentService.callback({
-          merchantTxnId: payloadData.merchantTxnId,
-          status: payloadData.status,
-          bankTxnId: decodedPayload.paymentInfo ? decodedPayload.paymentInfo.paymentRefNumber : "N/A"
-        });
+        await paymentService.callback(payloadData);
+
+        await paymentService.verifyTransactionWithBank(payloadData.merchantTxnId);
 
         if (payloadData.status === "SUCCESS" || payloadData.status === "PAID") {
           return res.redirect(`${frontendBase}/payment/success?data=${encrypted}`);
@@ -246,17 +274,18 @@ exports.clientReturnHandler = async (req, res) => {
       }
     }
 
-    const encrypted = encryptData(req.query);
-    const statusStr = (req.query.status || "").toUpperCase();
+    const encrypted = encryptData(returnPayload);
+    const statusStr = (returnPayload.status || "").toUpperCase();
     const isFailed = statusStr === "FAIL" || statusStr === "FAILED";
 
     // Force local DB update for mock bank flow
-    if (req.query.merchantTxnId) {
+    if (returnPayload.merchantTxnId) {
       await paymentService.callback({
-        merchantTxnId: req.query.merchantTxnId,
+        merchantTxnId: returnPayload.merchantTxnId,
         status: isFailed ? "FAILED" : "SUCCESS",
-        bankTxnId: req.query.bankTxnId || Math.floor(Math.random() * 10000000).toString()
+        bankTxnId: returnPayload.bankTxnId || Math.floor(Math.random() * 10000000).toString()
       });
+      await paymentService.verifyTransactionWithBank(returnPayload.merchantTxnId);
     }
 
     if (isFailed) {

@@ -25,6 +25,16 @@ export function MainLayout({ children }){
             <Link to="/hostels">Hostels</Link>
             <Link to="/admissions">Admissions</Link>
             <Link to="/affiliation">Affiliation</Link>
+            <Link to="/challan">Direct Challan</Link>
+            <Link to="/phd-fee">Ph.D Fees</Link>
+            <Link to="/history">History</Link>
+            <Link to="/about">About</Link>
+
+            <Link to="/test-sbi-epay">Test SBI ePay</Link>
+            <Link to="/test-multi-account">Test Multi-Account</Link>
+            <Link to="/faq">FAQ</Link>
+            <Link to="/terms">Terms</Link>
+            <Link to="/privacy">Privacy</Link>
           </nav>
         </div>
       </header>
@@ -37,6 +47,15 @@ export function MainLayout({ children }){
           <Link to="/admissions"><button className={loc.pathname==='/admissions' ? 'active' : ''}>Admissions</button></Link>
           <Link to="/affiliation"><button className={loc.pathname==='/affiliation' ? 'active' : ''}>Affiliation</button></Link>
           <Link to="/challan"><button className={loc.pathname==='/challan' ? 'active' : ''}>Direct Challan</button></Link>
+          <Link to="/phd-fee"><button className={loc.pathname==='/phd-fee' ? 'active' : ''}>Ph.D Fees</button></Link>
+          <Link to="/history"><button className={loc.pathname==='/history' ? 'active' : ''}>History</button></Link>
+          <Link to="/about"><button className={loc.pathname==='/about' ? 'active' : ''}>About</button></Link>
+          <Link to="/test-sbi-epay"><button className={loc.pathname==='/test-sbi-epay' ? 'active' : ''}>Test SBI ePay</button></Link>
+          <Link to="/test-multi-account"><button className={loc.pathname==='/test-multi-account' ? 'active' : ''}>Test Multi-Account</button></Link>
+          <Link to="/faq"><button className={loc.pathname==='/faq' ? 'active' : ''}>FAQ</button></Link>
+          <Link to="/terms"><button className={loc.pathname==='/terms' ? 'active' : ''}>Terms</button></Link>
+          <Link to="/privacy"><button className={loc.pathname==='/privacy' ? 'active' : ''}>Privacy</button></Link>
+
         </aside>
 
         <section className="content">

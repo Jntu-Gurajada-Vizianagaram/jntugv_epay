@@ -1,0 +1,538 @@
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 17/6/2026, 18:58:18 IST
+Merchant Order Number: JNTUGV1781702897982
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://test.epay.sbiuat.bank.in/secure/sucess3.jsp|https://test.epay.sbiuat.bank.in/secure/fail3.jsp|SBIEPAY|JNTUGV1781702897982|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjAAAduy6Uql5211Eud8J6O+hsuLMtp+R506AL4p5XupFzIxpeM46zUzk6IKsFS+66QOVUEVHOu5EkKV00f1/S9Ki8YyrlLS/2BrWSF5o9AG6X6NsUkVnfDHGXuVqtqGDjZMHymkNCOzgqIrTeTVvzBHtYILWicLcJG/R2WMKxlVfbDY8YB4PhP+/L9TbSvYwzzJv64M2EGuoQcEJG+vRHiuY
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://test.epay.sbiuat.bank.in/secure/sucess3.jsp
+Failure URL: https://test.epay.sbiuat.bank.in/secure/fail3.jsp
+
+===============================================================================
+LIVE LOG - SBI BROWSER RESPONSE SAMPLE PROVIDED
+===============================================================================
+Timestamp: 17/6/2026, 18:56:54 IST
+Merchant ID: 1000356
+Encrypted Browser Response: Di4+S+riqQ72wSWnaXRquW8Au17TYox2mAUToG4yClqI5B9TH1dpIU9uMcWZ5caVGbte9j40/ITM3W9lidkE6DE/gP5mNtIuYoyaxgyaDXfb74fvfst8H2cptKErIMnYg9DpsBIqBsp1Xxhl0cgXREK7ZNf6/+KQP6g9XHKKf/UbSK3hX9mjN4yZk31gF/HrMP6nKtZ5DNQ/0P4Gb/Q4pA==
+Decrypted Browser Response: JNTUGV1781702797900|4551016105012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198832|2026-06-17 18:56:54|IN|10003562026061708820|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Merchant Order Number: JNTUGV1781702797900
+SBIePay Reference ID / ATRN: 4551016105012
+Transaction Status: SUCCESS
+Amount: 300
+Currency: INR
+Pay Mode: NB
+Customer Name: Test User
+Status Description: Y
+Bank Code: SBIT
+Bank Reference Number: 198832
+Transaction Date: 2026-06-17 18:56:54
+Country: IN
+CIN / Response Code: 10003562026061708820
+Merchant ID From Response: 1000356
+Total Fee GST: 8.50^1.53
+Push Response: Thank you for transacting with SBIePay. Your transaction has been booked successfully.
+Routing Decision: SUCCESS page
+Storage Decision: Store parsed transaction details in payments.gateway_response and update local status to SUCCESS.
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 17/6/2026, 19:00:36 IST
+Merchant Order Number: JNTUGV1781703036412
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://test.epay.sbiuat.bank.in/secure/sucess3.jsp|https://test.epay.sbiuat.bank.in/secure/fail3.jsp|SBIEPAY|JNTUGV1781703036412|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjAAAduy6Uql5211Eud8J6O+hsuLMtp+R506AL4p5XupFzIxpeM46zUzk6IKsFS+66QOVUEVHOu5EkKV00f1/S9Ki8YyrlLS/2BrWSF5o9AG6X6NsUkVnfDHGXuVqtqGDjZMHymkNCOzgqIrTeTVvzBHtH9zX4JzkEhRNlWl7LpgGnyFwwBo/RAg+1sUa2dcfAVld79uiqXvlVE8s7D8DnMOX
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://test.epay.sbiuat.bank.in/secure/sucess3.jsp
+Failure URL: https://test.epay.sbiuat.bank.in/secure/fail3.jsp
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 17/6/2026, 19:44:36 IST
+Encrypted Browser Response: N/A
+Decrypted Browser Response: JNTUGV1781702797900|4551016105012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198832|2026-06-17 18:56:54|IN|10003562026061708820|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: SUCCESS
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781702797900
+SBIePay Reference ID / ATRN: 4551016105012
+Amount: 300
+Currency: INR
+Status Description: Y
+Bank Code: SBIT
+Bank Reference Number: 198832
+Transaction Date: 2026-06-17 18:56:54
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 17/6/2026, 19:44:36 IST
+Encrypted Browser Response: N/A
+Decrypted Browser Response: JNTUGV1781702689150|NA|FAIL|300|INR|NB|Test User|Wrong Source URL|NA|NA|2026-06-17 18:54:53|IN|00|1000356|0.00^0.00|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: FAIL
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781702689150
+SBIePay Reference ID / ATRN: NA
+Amount: 300
+Currency: INR
+Status Description: Wrong Source URL
+Bank Code: NA
+Bank Reference Number: NA
+Transaction Date: 2026-06-17 18:54:53
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE
+===============================================================================
+Timestamp: 17/6/2026, 19:44:41 IST
+Merchant Order Number: JNTUGV1781702797900
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781702797900",
+  "amount": "300",
+  "status": "SUCCESS",
+  "bankTxnId": "198832",
+  "merchantId": "1000356",
+  "atrn": "4551016105012",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "Y",
+  "bankCode": "SBIT",
+  "bankReferenceNumber": "198832",
+  "transactionDate": "2026-06-17 18:56:54",
+  "country": "IN",
+  "responseCode": "10003562026061708820",
+  "totalFeeGst": "8.50^1.53",
+  "rawResponse": "JNTUGV1781702797900|4551016105012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198832|2026-06-17 18:56:54|IN|10003562026061708820|1000356|8.50^1.53|||||||||"
+}
+Incoming Bank Status: SUCCESS
+Mapped Local Status: SUCCESS
+Bank Transaction ID: 198832
+Gateway Response Stored: {"merchantTxnId":"JNTUGV1781702797900","amount":"300","status":"SUCCESS","bankTxnId":"198832","merchantId":"1000356","atrn":"4551016105012","currency":"INR","payMode":"NB","customerName":"Test User","statusDescription":"Y","bankCode":"SBIT","bankReferenceNumber":"198832","transactionDate":"2026-06-17 18:56:54","country":"IN","responseCode":"10003562026061708820","totalFeeGst":"8.50^1.53","rawResponse":"JNTUGV1781702797900|4551016105012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198832|2026-06-17 18:56:54|IN|10003562026061708820|1000356|8.50^1.53|||||||||"}
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE
+===============================================================================
+Timestamp: 17/6/2026, 19:44:41 IST
+Merchant Order Number: JNTUGV1781702689150
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781702689150",
+  "amount": "300",
+  "status": "FAIL",
+  "bankTxnId": "NA",
+  "merchantId": "1000356",
+  "atrn": "NA",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "Wrong Source URL",
+  "bankCode": "NA",
+  "bankReferenceNumber": "NA",
+  "transactionDate": "2026-06-17 18:54:53",
+  "country": "IN",
+  "responseCode": "00",
+  "totalFeeGst": "0.00^0.00",
+  "rawResponse": "JNTUGV1781702689150|NA|FAIL|300|INR|NB|Test User|Wrong Source URL|NA|NA|2026-06-17 18:54:53|IN|00|1000356|0.00^0.00|||||||||"
+}
+Incoming Bank Status: FAIL
+Mapped Local Status: FAILED
+Bank Transaction ID: NA
+Gateway Response Stored: {"merchantTxnId":"JNTUGV1781702689150","amount":"300","status":"FAIL","bankTxnId":"NA","merchantId":"1000356","atrn":"NA","currency":"INR","payMode":"NB","customerName":"Test User","statusDescription":"Wrong Source URL","bankCode":"NA","bankReferenceNumber":"NA","transactionDate":"2026-06-17 18:54:53","country":"IN","responseCode":"00","totalFeeGst":"0.00^0.00","rawResponse":"JNTUGV1781702689150|NA|FAIL|300|INR|NB|Test User|Wrong Source URL|NA|NA|2026-06-17 18:54:53|IN|00|1000356|0.00^0.00|||||||||"}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 17/6/2026, 19:44:41 IST
+Merchant Order Number: JNTUGV1781702797900
+queryRequest: |1000356|JNTUGV1781702797900|300.00
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781702797900"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 17/6/2026, 19:44:41 IST
+Merchant Order Number: JNTUGV1781702689150
+queryRequest: |1000356|JNTUGV1781702689150|300.00
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781702689150"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 17/6/2026, 19:44:42 IST
+Merchant Order Number: JNTUGV1781702797900
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 17/6/2026, 19:44:42 IST
+Merchant Order Number: JNTUGV1781702689150
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:10:28 IST
+Merchant Order Number: JNTUGV1781844026721
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 750
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|750|Sinthu|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781844026721|2|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbMsX1HJnn9auYpr2solsPAkhHBxCj+rRNvVcy7K2POrODEiKX5IErgszNiBx2ZnFtk2VbG9tiQ2nNggtgibCpMwhl5Ecm9Xv45VgnP7tR2qtA3/GHxwrjT1zSNvzNYZ/igdTnwVL5/1EDzC+Twvr76fV6WC2+G5THj3s15JB7LhgtgrZeT+2PMonqkqckQMh6kXDyuQONsT1wTzpjG87HR4=
+Plain Multi Account Instruction: 750|INR|GRPT
+MultiAccountInstructionDtls: 6H6yvtJPz0Bg6UtPRM+9Xw==
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:10:51 IST
+Merchant Order Number: JNTUGV1781844051028
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://test.epay.sbiuat.bank.in/secure/sucess3.jsp|https://test.epay.sbiuat.bank.in/secure/fail3.jsp|SBIEPAY|JNTUGV1781844051028|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjAAAduy6Uql5211Eud8J6O+hsuLMtp+R506AL4p5XupFzIxpeM46zUzk6IKsFS+66QOVUEVHOu5EkKV00f1/S9Ki8YyrlLS/2BrWSF5o9AG6X6NsUkVnfDHGXuVqtqGDjZMHymkNCOzgqIrTeTVvzBHtFf/o4vnn3PFQicagcxRncZgK8dTI7t31Dijqa1NOozoRkH/dkS2bEsOf31jRDu9+
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://test.epay.sbiuat.bank.in/secure/sucess3.jsp
+Failure URL: https://test.epay.sbiuat.bank.in/secure/fail3.jsp
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:13:50 IST
+Merchant Order Number: JNTUGV1781844230837
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|http://localhost:4000/api/payment/return|http://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781844230837|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjADI20RYd+reE0lClv5JgjumbL30Mer6AsiidwzfT6H0HBwlWgye8LXJ9v5jcO7tbaqj6NAife68RfcucMHQ7Y8te3PpRC9OLcmlNMUPeG9VRkfGxybV/Z7rFmrK18LZkNK+AB3GQc54YKFmpiq3SmPD28OJB7hUErZl5lfKwPwyh7D2eYBmpAsUMDqWAlTIXCk=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: http://localhost:4000/api/payment/return
+Failure URL: http://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:16:05 IST
+Merchant Order Number: JNTUGV1781844365443
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781844365443|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjABVPctL6TJjukD5YtHxPNJD6GQLxhCKWu7aX6pO3xbFh4s0FBUew3Gs/94HOPQwXDQ3aO77/f49LqwcuajrpV1IOLj0iUcoHoHxPkDbFWKYKkwlXMoJeKPOK1liWCYmA1YPVtt7BTLrf1298eVgp0IJp6XHX1wcoj4Qf/qQxerbaXBR03Gj+Ob8dnyHHE8OukU=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:16:31 IST
+Encrypted Browser Response: CdQThWuXymiyphT2FKVwJuQ2KadQzib4I0/zjahVPHMyphxo7aiLt3+PoqEqlrR7iEx+Or59tE6eLTf9P+9Fbaed3UJ07vFa8Yj0yEVXwqimwvzP3U6+BZ5Bdndsd1k2LRhdc4bj6iajJsOUlYKo59Re/nEr83MWv+VM91TEmg448q8hRbXUnAFnSZHKFPJyLDXLvJvJnw/pTW5bxTmcpw==
+Decrypted Browser Response: JNTUGV1781844365443|0986828309612|SUCCESS|300|INR|NB|Test User|Y|SBIT|198939|2026-06-19 10:16:18|IN|10003562026061908843|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: SUCCESS
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781844365443
+SBIePay Reference ID / ATRN: 0986828309612
+Amount: 300
+Currency: INR
+Status Description: Y
+Bank Code: SBIT
+Bank Reference Number: 198939
+Transaction Date: 2026-06-19 10:16:18
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:16:31 IST
+Merchant Order Number: JNTUGV1781844365443
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781844365443",
+  "amount": "300",
+  "status": "SUCCESS",
+  "bankTxnId": "198939",
+  "merchantId": "1000356",
+  "atrn": "0986828309612",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "Y",
+  "bankCode": "SBIT",
+  "bankReferenceNumber": "198939",
+  "transactionDate": "2026-06-19 10:16:18",
+  "country": "IN",
+  "responseCode": "10003562026061908843",
+  "totalFeeGst": "8.50^1.53",
+  "rawResponse": "JNTUGV1781844365443|0986828309612|SUCCESS|300|INR|NB|Test User|Y|SBIT|198939|2026-06-19 10:16:18|IN|10003562026061908843|1000356|8.50^1.53|||||||||"
+}
+Incoming Bank Status: SUCCESS
+Mapped Local Status: SUCCESS
+Bank Transaction ID: 198939
+Service Charges Paid: 8.50
+GST Paid: 1.53
+Gateway Response Stored: {"merchantTxnId":"JNTUGV1781844365443","amount":"300","status":"SUCCESS","bankTxnId":"198939","merchantId":"1000356","atrn":"0986828309612","currency":"INR","payMode":"NB","customerName":"Test User","statusDescription":"Y","bankCode":"SBIT","bankReferenceNumber":"198939","transactionDate":"2026-06-19 10:16:18","country":"IN","responseCode":"10003562026061908843","totalFeeGst":"8.50^1.53","rawResponse":"JNTUGV1781844365443|0986828309612|SUCCESS|300|INR|NB|Test User|Y|SBIT|198939|2026-06-19 10:16:18|IN|10003562026061908843|1000356|8.50^1.53|||||||||","transactionNumber":"JNTUGV1781844365443","paymentId":325,"serviceChargePaid":"8.50","gstPaid":"1.53","totalChargesPaid":"10.03"}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:16:31 IST
+Merchant Order Number: JNTUGV1781844365443
+queryRequest: |1000356|JNTUGV1781844365443|300.00
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781844365443"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 19/6/2026, 10:16:31 IST
+Merchant Order Number: JNTUGV1781844365443
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:17:02 IST
+Merchant Order Number: JNTUGV1781844422231
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781844422231|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjABVPctL6TJjukD5YtHxPNJD6GQLxhCKWu7aX6pO3xbFh4s0FBUew3Gs/94HOPQwXDQ3aO77/f49LqwcuajrpV1IOLj0iUcoHoHxPkDbFWKYKkwlXMoJeKPOK1liWCYmA1bSwLY1qjQ/Tw1lzOO5J4EkJM6t4yGMAWg2ZeTGwW01HR/diE40Ej3GZYM0STAEKUg=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:47:26 IST
+Merchant Order Number: JNTUGV1781846246673
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781846246673|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjABVPctL6TJjukD5YtHxPNJD6GQLxhCKWu7aX6pO3xbFh4s0FBUew3Gs/94HOPQwXDQ3aO77/f49LqwcuajrpV1IOLj0iUcoHoHxPkDbFWKYKkwlXMoJeKPOK1liWCYmA1aXOaB7UVRSTVlzFwrr3gh4LagDM6yNM+W/X2IBcZZGPAzMQXFVj5OMn8OUfIxzMG8=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:47:53 IST
+Encrypted Browser Response: +LF+1lHBReQ5cuvwnoBY8nAXjxJLx73paK7Axp0Ier5ezc67izRhfWlxqdSXjDF+jiSKTSXgcvszdYaDuRRv6gCIhGy6foLekkyES/8paq6XyCSjznBpO5bYtGEJ0OE3xLw2WeNGrZkVw1gt+l5Uwaw8ETf9oGkuLNoEYNuNThBAWhVrDt0se/W90cHS78xo
+Decrypted Browser Response: JNTUGV1781846246673|7309142974512|FAIL|300|INR|NB|Test User|N|SBIT|NA|2026-06-19 10:47:43|IN|10003562026061908846|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: FAIL
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781846246673
+SBIePay Reference ID / ATRN: 7309142974512
+Amount: 300
+Currency: INR
+Status Description: N
+Bank Code: SBIT
+Bank Reference Number: NA
+Transaction Date: 2026-06-19 10:47:43
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:47:54 IST
+Merchant Order Number: JNTUGV1781846246673
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781846246673",
+  "amount": "300",
+  "status": "FAIL",
+  "bankTxnId": "NA",
+  "merchantId": "1000356",
+  "atrn": "7309142974512",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "N",
+  "bankCode": "SBIT",
+  "bankReferenceNumber": "NA",
+  "transactionDate": "2026-06-19 10:47:43",
+  "country": "IN",
+  "responseCode": "10003562026061908846",
+  "totalFeeGst": "8.50^1.53",
+  "rawResponse": "JNTUGV1781846246673|7309142974512|FAIL|300|INR|NB|Test User|N|SBIT|NA|2026-06-19 10:47:43|IN|10003562026061908846|1000356|8.50^1.53|||||||||"
+}
+Incoming Bank Status: FAIL
+Mapped Local Status: FAILED
+Bank Transaction ID: NA
+Service Charges Paid: 8.50
+GST Paid: 1.53
+Gateway Response Stored: {"merchantTxnId":"JNTUGV1781846246673","amount":"300","status":"FAIL","bankTxnId":"NA","merchantId":"1000356","atrn":"7309142974512","currency":"INR","payMode":"NB","customerName":"Test User","statusDescription":"N","bankCode":"SBIT","bankReferenceNumber":"NA","transactionDate":"2026-06-19 10:47:43","country":"IN","responseCode":"10003562026061908846","totalFeeGst":"8.50^1.53","rawResponse":"JNTUGV1781846246673|7309142974512|FAIL|300|INR|NB|Test User|N|SBIT|NA|2026-06-19 10:47:43|IN|10003562026061908846|1000356|8.50^1.53|||||||||","transactionNumber":"JNTUGV1781846246673","paymentId":327,"serviceChargePaid":"8.50","gstPaid":"1.53","totalChargesPaid":"10.03"}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:47:54 IST
+Merchant Order Number: JNTUGV1781846246673
+queryRequest: |1000356|JNTUGV1781846246673|300.00
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781846246673"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 19/6/2026, 10:47:55 IST
+Merchant Order Number: JNTUGV1781846246673
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:58:16 IST
+Merchant Order Number: JNTUGV1781846896550
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781846896550|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjABVPctL6TJjukD5YtHxPNJD6GQLxhCKWu7aX6pO3xbFh4s0FBUew3Gs/94HOPQwXDQ3aO77/f49LqwcuajrpV1IOLj0iUcoHoHxPkDbFWKYKkwlXMoJeKPOK1liWCYmA1YwE/seZVW1W9BrTkrqZDEZkyxL3847XGhAyb9pGbZ2euS3gjJbFH+dkAdQ7gqfI7w=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - TRANSACTION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:58:23 IST
+Merchant Order Number: JNTUGV1781846903180
+Merchant ID: 1000356
+Aggregator ID: SBIEPAY
+Amount: 300
+Action URL: https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+Plain Transaction Request: 1000356|DOM|IN|INR|300|Test User|https://localhost:4000/api/payment/return|https://localhost:4000/api/payment/return|SBIEPAY|JNTUGV1781846903180|5|NB|ONLINE|ONLINE
+EncryptTrans: TD1ceCVOn9zYzqlLhYtcbM+64CZG4unsTTDxpzybjABVPctL6TJjukD5YtHxPNJD6GQLxhCKWu7aX6pO3xbFh4s0FBUew3Gs/94HOPQwXDQ3aO77/f49LqwcuajrpV1IOLj0iUcoHoHxPkDbFWKYKkwlXMoJeKPOK1liWCYmA1ZwDRSH705ISslVxuLxL+RnFIGj9gcSbExpz9M7nrLaSOBmY8uBGD2HKWI2Dbn4evI=
+Plain Multi Account Instruction: 100|INR|GRPT||200|INR|NEFT
+MultiAccountInstructionDtls: DnGEpt9EvVGDc94oUxjrrcwsuyvq+KEKmZP6v8q+GGU=
+Form Field merchIdVal: 1000356
+Success URL: https://localhost:4000/api/payment/return
+Failure URL: https://localhost:4000/api/payment/return
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:58:44 IST
+Encrypted Browser Response: OSi0l6z3sGKuwBITbVellBVU6xpuQB0YpMPLYhP6hIRKaOVezPKeBKGuUI3hDrWPQSZYsUxUTpwSFEgaM6/VEdCsPwfo8NVKr3USbQZLRyeuvoVzdh2NrBF/Dj2QAgC/PU894mgb9234pM8gxxvpSToWRBopy2wvX0KGW610ICTQnl9lXKFRT5JT9szsGZNpPavPAli1zesJSTCoSY3w7A==
+Decrypted Browser Response: JNTUGV1781846903180|4560849246012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198949|2026-06-19 10:58:35|IN|10003562026061908848|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: SUCCESS
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781846903180
+SBIePay Reference ID / ATRN: 4560849246012
+Amount: 300
+Currency: INR
+Status Description: Y
+Bank Code: SBIT
+Bank Reference Number: 198949
+Transaction Date: 2026-06-19 10:58:35
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 10:58:44 IST
+Merchant Order Number: JNTUGV1781846903180
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781846903180",
+  "amount": "300",
+  "status": "SUCCESS",
+  "bankTxnId": "198949",
+  "merchantId": "1000356",
+  "atrn": "4560849246012",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "Y",
+  "bankCode": "SBIT",
+  "bankReferenceNumber": "198949",
+  "transactionDate": "2026-06-19 10:58:35",
+  "country": "IN",
+  "responseCode": "10003562026061908848",
+  "totalFeeGst": "8.50^1.53",
+  "rawResponse": "JNTUGV1781846903180|4560849246012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198949|2026-06-19 10:58:35|IN|10003562026061908848|1000356|8.50^1.53|||||||||"
+}
+Incoming Bank Status: SUCCESS
+Mapped Local Status: SUCCESS
+Bank Transaction ID: 198949
+Service Charges Paid: 8.50
+GST Paid: 1.53
+Gateway Response Stored: {"merchantTxnId":"JNTUGV1781846903180","amount":"300","status":"SUCCESS","bankTxnId":"198949","merchantId":"1000356","atrn":"4560849246012","currency":"INR","payMode":"NB","customerName":"Test User","statusDescription":"Y","bankCode":"SBIT","bankReferenceNumber":"198949","transactionDate":"2026-06-19 10:58:35","country":"IN","responseCode":"10003562026061908848","totalFeeGst":"8.50^1.53","rawResponse":"JNTUGV1781846903180|4560849246012|SUCCESS|300|INR|NB|Test User|Y|SBIT|198949|2026-06-19 10:58:35|IN|10003562026061908848|1000356|8.50^1.53|||||||||","transactionNumber":"JNTUGV1781846903180","paymentId":329,"serviceChargePaid":"8.50","gstPaid":"1.53","totalChargesPaid":"10.03"}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 10:58:44 IST
+Merchant Order Number: JNTUGV1781846903180
+queryRequest: |1000356|JNTUGV1781846903180|300.00
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781846903180"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 19/6/2026, 10:58:45 IST
+Merchant Order Number: JNTUGV1781846903180
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK

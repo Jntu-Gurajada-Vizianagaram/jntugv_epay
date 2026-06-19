@@ -38,8 +38,11 @@ export function TestSbiEpay() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || "https://localhost:4000").replace(/\/$/, "");
+  const appReturnUrl = `${apiBaseUrl}/api/payment/return`;
+
   // Construct the exact singleRequest string live for developer visibility
-  const liveSingleRequest = `${form.merchantId}|${form.operatingMode}|${form.merchantCountry}|${form.merchantCurrency}|${form.amount}|NA|https://test.epay.sbiuat.bank.in/secure/sucess3.jsp|https://test.epay.sbiuat.bank.in/secure/fail3.jsp|${form.aggregatorId}|${merchantOrderNo || "TIMESTAMP"}|${form.merchantCustomerId}|${form.paymode}|${form.accessMedium}|${form.transactionSource}`;
+  const liveSingleRequest = `${form.merchantId}|${form.operatingMode}|${form.merchantCountry}|${form.merchantCurrency}|${form.amount}|NA|${appReturnUrl}|${appReturnUrl}|${form.aggregatorId}|${merchantOrderNo || "TIMESTAMP"}|${form.merchantCustomerId}|${form.paymode}|${form.accessMedium}|${form.transactionSource}`;
 
   async function handleGenerate(e) {
     e.preventDefault();
@@ -84,8 +87,8 @@ export function TestSbiEpay() {
         accessMedium: form.accessMedium,
         transactionSource: form.transactionSource,
         multiAccountInstructionDtls: form.multiAccountInstructionDtls,
-        successUrl: "https://test.epay.sbiuat.bank.in/secure/sucess3.jsp",
-        failUrl: "https://test.epay.sbiuat.bank.in/secure/fail3.jsp",
+        successUrl: appReturnUrl,
+        failUrl: appReturnUrl,
       };
 
       const res = await initiatePayment(payload);
@@ -311,7 +314,6 @@ export function TestSbiEpay() {
                     ref={formRef}
                     method="POST"
                     action={form.actionUrl}
-                    target="_blank"
                     className="mt-6 pt-4 border-t border-emerald-100"
                   >
                     <input type="hidden" name="EncryptTrans" value={paymentData.fields.EncryptTrans} />
