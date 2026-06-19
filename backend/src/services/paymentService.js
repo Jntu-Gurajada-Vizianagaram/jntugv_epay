@@ -255,14 +255,17 @@ exports.initiate = async (data) => {
     });
   }
 
-  // FIXED URL
   const cleanUrl = (url) => (url ? url.replace(/\/$/, "") : "");
+  const joinUrl = (base, pathSuffix) => `${cleanUrl(base)}${pathSuffix.startsWith("/") ? pathSuffix : `/${pathSuffix}`}`;
+  const apiBaseFromEnv = cleanUrl(process.env.API_URL);
+  const apiBaseUrl = apiBaseFromEnv
+    ? (/\/api$/i.test(apiBaseFromEnv) ? apiBaseFromEnv : `${apiBaseFromEnv}/api`)
+    : "https://localhost:4000/api";
 
-  const apiBaseUrl = cleanUrl(process.env.API_URL) || "https://localhost:4000";
-
-  // SBI_PUSH_URL is the official term for the server-to-server callback
-  const callbackUrl = cleanUrl(process.env.SBI_PUSH_URL) || cleanUrl(process.env.CALLBACK_URL) || `${apiBaseUrl}/api/payment/callback`;
-  const returnUrl = cleanUrl(process.env.RETURN_URL) || `${apiBaseUrl}/api/payment/return`;
+  // SBI_PUSH_URL is the official term for the server-to-server callback.
+  // API_URL may be either https://host or https://host/api; both are supported.
+  const callbackUrl = cleanUrl(process.env.SBI_PUSH_URL) || cleanUrl(process.env.CALLBACK_URL) || joinUrl(apiBaseUrl, "/payment/callback");
+  const returnUrl = cleanUrl(process.env.RETURN_URL) || joinUrl(apiBaseUrl, "/payment/return");
   const isBankHostedTestPage = (url) => /sbiuat\.bank\.in\/secure\/(?:sucess3|fail3)\.jsp/i.test(String(url || ""));
 
   try {

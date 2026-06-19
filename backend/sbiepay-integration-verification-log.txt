@@ -536,3 +536,65 @@ Timestamp: 19/6/2026, 10:58:45 IST
 Merchant Order Number: JNTUGV1781846903180
 Error: N/A
 Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK
+
+===============================================================================
+LIVE LOG - BROWSER RESPONSE
+===============================================================================
+Timestamp: 19/6/2026, 14:21:59 IST
+Encrypted Browser Response: BBu6WTKuQ/1yEGamW4y8Iut0T7uTehxWbSVcil60maBCYQAG085xOf/tcaiwvA4pNHxImLnnS6CdxWJh0iw/8kt1BRiU46fDoJP3Q+P7rjjLNpOg7bbJF6Jbhew8DeidJ0ZH5QkLV4rUPySm3V2TzFru5yVdYct3tgEoz8TnpbwyKlgvC0nrWoGTmOjjIDM0MT0WzTc3xp7V952FKdJbTQ==
+Decrypted Browser Response: JNTUGV1781859091941|9574429709912|SUCCESS|300|INR|NB|Test User|Y|SBIT|198993|2026-06-19 14:21:48|IN|10003562026061908859|1000356|8.50^1.53|||||||||
+Detected Response Format: MERCHANT_ORDER_FIRST
+Transaction Status: SUCCESS
+Merchant ID: 1000356
+Merchant Order Number: JNTUGV1781859091941
+SBIePay Reference ID / ATRN: 9574429709912
+Amount: 300
+Currency: INR
+Status Description: Y
+Bank Code: SBIT
+Bank Reference Number: 198993
+Transaction Date: 2026-06-19 14:21:48
+
+===============================================================================
+LIVE LOG - CALLBACK RESPONSE - TRANSACTION NOT FOUND
+===============================================================================
+Timestamp: 19/6/2026, 14:21:59 IST
+Raw Callback Body: {
+  "merchantTxnId": "JNTUGV1781859091941",
+  "amount": "300",
+  "status": "SUCCESS",
+  "bankTxnId": "198993",
+  "merchantId": "1000356",
+  "atrn": "9574429709912",
+  "currency": "INR",
+  "payMode": "NB",
+  "customerName": "Test User",
+  "statusDescription": "Y",
+  "bankCode": "SBIT",
+  "bankReferenceNumber": "198993",
+  "transactionDate": "2026-06-19 14:21:48",
+  "country": "IN",
+  "responseCode": "10003562026061908859",
+  "totalFeeGst": "8.50^1.53",
+  "rawResponse": "JNTUGV1781859091941|9574429709912|SUCCESS|300|INR|NB|Test User|Y|SBIT|198993|2026-06-19 14:21:48|IN|10003562026061908859|1000356|8.50^1.53|||||||||"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION REQUEST
+===============================================================================
+Timestamp: 19/6/2026, 14:21:59 IST
+Merchant Order Number: JNTUGV1781859091941
+queryRequest: |1000356|JNTUGV1781859091941|N/A
+aggregatorId: SBIEPAY
+merchantId: 1000356
+SDK Payload: {
+  "orderRefNumber": "JNTUGV1781859091941"
+}
+
+===============================================================================
+LIVE LOG - DOUBLE VERIFICATION ERROR
+===============================================================================
+Timestamp: 19/6/2026, 14:22:00 IST
+Merchant Order Number: JNTUGV1781859091941
+Error: N/A
+Verification Conclusion: SDK CALL FAILED OR TRANSACTION NOT FOUND IN BANK

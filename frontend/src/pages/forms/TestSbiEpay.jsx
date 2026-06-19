@@ -38,8 +38,10 @@ export function TestSbiEpay() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  const apiBaseUrl = (import.meta.env.VITE_API_URL || "https://localhost:4000").replace(/\/$/, "");
-  const appReturnUrl = `${apiBaseUrl}/api/payment/return`;
+  const rawApiBaseUrl = import.meta.env.VITE_API_URL || "/api";
+  const resolvedApiBaseUrl = new URL(rawApiBaseUrl, window.location.origin).href.replace(/\/$/, "");
+  const apiBaseUrl = /\/api$/i.test(resolvedApiBaseUrl) ? resolvedApiBaseUrl : `${resolvedApiBaseUrl}/api`;
+  const appReturnUrl = `${apiBaseUrl}/payment/return`;
 
   // Construct the exact singleRequest string live for developer visibility
   const liveSingleRequest = `${form.merchantId}|${form.operatingMode}|${form.merchantCountry}|${form.merchantCurrency}|${form.amount}|NA|${appReturnUrl}|${appReturnUrl}|${form.aggregatorId}|${merchantOrderNo || "TIMESTAMP"}|${form.merchantCustomerId}|${form.paymode}|${form.accessMedium}|${form.transactionSource}`;

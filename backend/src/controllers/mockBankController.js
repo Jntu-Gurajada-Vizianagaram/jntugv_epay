@@ -4,6 +4,12 @@ const AES256 = require("../utils/encryptor");
 
 const aes = new AES256();
 
+const cleanUrl = (url) => (url ? String(url).replace(/\/$/, "") : "");
+const withApiBase = (url) => {
+  const base = cleanUrl(url) || "https://localhost:4000/api";
+  return /\/api$/i.test(base) ? base : `${base}/api`;
+};
+
 const htmlEscape = (value) => String(value || "")
   .replace(/&/g, "&amp;")
   .replace(/</g, "&lt;")
@@ -36,7 +42,7 @@ exports.processMockPayment = async (req, res) => {
         customerName = parts[5];
         returnUrl = parts[6];
         merchantTxnId = parts[9];
-        callbackUrl = `${process.env.API_URL || "https://localhost:4000"}/api/payment/callback`;
+        callbackUrl = `${withApiBase(process.env.API_URL)}/payment/callback`;
       } catch (err) {
         console.error("[MockBank] Failed to decrypt EncryptTrans payload:", err.message);
       }

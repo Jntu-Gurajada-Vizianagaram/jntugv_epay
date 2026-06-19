@@ -212,8 +212,36 @@ exports.decryptPaymentData = async (req, res) => {
   }
 };
 
+function cleanUrl(url) {
+  return url ? String(url).replace(/\/$/, "") : "";
+}
+
+function isLocalUrl(url) {
+  return /\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(String(url || ""));
+}
+
+function getFrontendBaseUrl(req) {
+  const configuredAppBase = cleanUrl(process.env.APP_BASE_URL);
+  if (configuredAppBase && !(process.env.NODE_ENV === "production" && isLocalUrl(configuredAppBase))) {
+    return configuredAppBase;
+  }
+
+  const configuredApiBase = cleanUrl(process.env.API_URL);
+  if (configuredApiBase && !(process.env.NODE_ENV === "production" && isLocalUrl(configuredApiBase))) {
+    try {
+      const apiUrl = new URL(configuredApiBase);
+      return `${apiUrl.protocol}//${apiUrl.host}`;
+    } catch {
+      return configuredApiBase.replace(/\/api$/i, "");
+    }
+  }
+
+  const protocol = req.secure || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+  return `${protocol}://${req.get("host")}`;
+}
+
 exports.clientReturnHandler = async (req, res) => {
-  const frontendBase = process.env.APP_BASE_URL || "https://localhost:5173";
+  const frontendBase = getFrontendBaseUrl(req);
   try {
     const returnPayload = { ...(req.query || {}), ...(req.body || {}) };
     const encryptedFinalResponse =
