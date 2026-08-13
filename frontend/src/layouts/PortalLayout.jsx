@@ -1,6 +1,7 @@
 import React from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { AnnouncementBanner } from "../components/AnnouncementBanner";
 
 export function PortalLayout({ children }) {
   return (
@@ -8,6 +9,8 @@ export function PortalLayout({ children }) {
 
       {/* --- Sticky Header --- */}
       <Header />
+
+      <AnnouncementBanner resetDismissalOnEnter={true} />
 
       {/* --- Main Container --- */}
       <main className="flex-1 w-full">

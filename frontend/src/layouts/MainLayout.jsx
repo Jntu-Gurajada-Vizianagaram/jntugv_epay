@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { AnnouncementBanner } from "../components/AnnouncementBanner";
 
 export function MainLayout({ children }){
   const loc = useLocation();
@@ -38,6 +39,8 @@ export function MainLayout({ children }){
           </nav>
         </div>
       </header>
+
+      <AnnouncementBanner resetDismissalOnEnter={true} />
 
       <main className="container main">
         <aside className="sidebar card" aria-hidden={false}>

@@ -33,7 +33,7 @@ export function Header() {
               transition-transform duration-300 group-hover:scale-105
             ">
               <img
-                src="https://jntugv.edu.in/static/media/jntugvcev.b33bb43b07b2037ab043.jpg"
+                src="/jntugv-logo.png"
                 alt="JNTU-GV Logo"
                 className="w-full h-full object-contain p-1"
               />

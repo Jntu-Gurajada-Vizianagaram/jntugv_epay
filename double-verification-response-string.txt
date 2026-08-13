@@ -1,0 +1,27 @@
+Subject: SBIePay Double Verification Response String Required
+
+Dear Team,
+
+We have received the transaction response logs. To process the transactions further,
+we also require the SBIePay double verification response string.
+
+Double verification request format:
+queryRequest = ATRN(Optional)|Merchant ID|Merchant Order Number|Amount
+
+Sample queryRequest:
+|1000356|JNTUGV1781846903180|300.00
+
+Double verification response packet format:
+Merchant ID|SBIePayRefID/ATRN|Transaction Status|Country|Currency|Other Details|MerchantOrderNumber|Amount|Status Description|BankCode|Bank Reference Number|Transaction Date|Pay Mode|CIN|Merchant ID|Total Fee GST|Ref1|Ref2|Ref3|Ref4|Ref5|Ref6|Ref7|Ref8|Ref9|Ref10
+
+Sample double verification response string:
+1000356|4560849246012|SUCCESS|IN|INR|Test User|JNTUGV1781846903180|300|Payment Successful|SBIT|198949|2026-06-19 10:58:35|NB|10003562026061908848|1000356|8.50^1.53||||||||||
+
+Sample failed double verification response string:
+1000356|7309142974512|FAIL|IN|INR|Test User|JNTUGV1781846246673|300|Payment Failed|SBIT|NA|2026-06-19 10:47:43|NB|10003562026061908846|1000356|8.50^1.53||||||||||
+
+Please share the double verification response string in the above pipe-separated
+format for the required transaction so that we can verify and process it further.
+
+Regards,
+JNTUGV ePay Team
