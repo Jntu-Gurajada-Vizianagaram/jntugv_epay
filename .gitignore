@@ -94,6 +94,9 @@ Thumbs.db
 tmp/
 temp/
 
+# Ignore Office temporary files that start with ~$
+~$*
+
 # Database files
 *.sqlite
 *.db
